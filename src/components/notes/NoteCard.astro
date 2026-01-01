@@ -1,0 +1,66 @@
+---
+import { Image } from 'astro:assets'
+import { render, type CollectionEntry } from 'astro:content'
+
+import { cn } from 'astro-pure/utils'
+import { Button, FormattedDate, Icon } from 'astro-pure/user'
+
+interface Props {
+  note: CollectionEntry<'notes'>
+  class?: string
+}
+
+const { note, class: className } = Astro.props
+const { id, data, body } = note
+const { Content } = await render(note)
+
+const noteDate = data.updatedDate ?? data.publishDate
+---
+
+<article
+  class={cn(
+    'note-card group relative rounded-2xl border bg-background p-4 sm:p-5 transition-colors hover:bg-muted',
+    className
+  )}
+>
+  {/* Header: Date, Location, Mood */}
+  <div class='flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-3'>
+    <FormattedDate date={noteDate} class='flex items-center gap-1'>
+      <Icon name='calendar' class='size-4' slot='prefix' />
+    </FormattedDate>
+    {
+      data.location && (
+        <span class='flex items-center gap-1'>
+          <Icon name='location' class='size-4' />
+          {data.location}
+        </span>
+      )
+    }
+    {
+      data.mood && (
+        <span class='flex items-center gap-1'>
+          <span class='text-base'>{data.mood}</span>
+        </span>
+      )
+    }
+  </div>
+
+  {/* Content */}
+  <div class='prose prose-sm max-w-none text-foreground'>
+    <Content />
+  </div>
+
+  {/* Image */}
+  {
+    data.image && (
+      <div class='mt-4 overflow-hidden rounded-xl'>
+        <Image
+          src={data.image.src}
+          alt={data.image.alt || 'Note image'}
+          class='w-full h-auto object-cover max-h-96'
+          loading='lazy'
+        />
+      </div>
+    )
+  }
+</article>

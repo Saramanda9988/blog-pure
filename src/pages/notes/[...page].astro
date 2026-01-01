@@ -1,0 +1,94 @@
+---
+import type { GetStaticPaths, Page } from 'astro'
+import type { CollectionEntry } from 'astro:content'
+
+import { Paginator } from 'astro-pure/components/pages'
+import { sortMDByDate } from 'astro-pure/server'
+import { getCollection } from 'astro:content'
+import { Button } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import NoteCard from '@/components/notes/NoteCard.astro'
+
+export const prerender = true
+
+// Get notes collection helper
+const prod = import.meta.env.PROD
+const getNotesCollection = async () => {
+  return await getCollection('notes', ({ data }) => {
+    return prod ? !data.draft : true
+  })
+}
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allNotes = await getCollection('notes', ({ data }) => {
+    return import.meta.env.PROD ? !data.draft : true
+  })
+  const collections = sortMDByDate(allNotes)
+  const collectionsCount = collections.length
+  return paginate(collections, {
+    pageSize: 10,
+    props: { collectionsCount }
+  })
+}) satisfies GetStaticPaths
+
+interface Props {
+  page: Page<CollectionEntry<'notes'>>
+  collectionsCount: number
+}
+
+const { page, collectionsCount } = Astro.props
+
+const meta = {
+  description: '碎片化的想法和日常记录',
+  title: 'Notes'
+}
+
+const paginationProps = {
+  ...(page.url.prev && {
+    prevUrl: {
+      text: `← 上一页`,
+      url: page.url.prev
+    }
+  }),
+  ...(page.url.next && {
+    nextUrl: {
+      text: `下一页 →`,
+      url: page.url.next
+    }
+  })
+}
+---
+
+<PageLayout {meta}>
+  <Button title='Back' href='/' variant='back' />
+  <main class='mt-6 lg:mt-10'>
+    <div id='content-header' class='animate'>
+      <h1 class='mb-2 text-3xl font-medium sm:mb-4'>Notes</h1>
+      <p class='text-muted-foreground mb-6'>碎片化的想法与日常记录 ✨</p>
+    </div>
+
+    {
+      page.data.length === 0 ? (
+        <p class='text-muted-foreground'>暂无小记...</p>
+      ) : (
+        <section aria-label='Notes list' class='animate' id='content'>
+          {/* Header */}
+          <div class='mb-4 flex items-center justify-between text-sm text-muted-foreground'>
+            <span>
+              第 {page.currentPage} 页 - 共 {collectionsCount} 条小记
+            </span>
+          </div>
+
+          {/* Notes Grid */}
+          <div class='grid gap-4 sm:gap-6'>
+            {page.data.map((note) => (
+              <NoteCard {note} />
+            ))}
+          </div>
+
+          <Paginator {...paginationProps} />
+        </section>
+      )
+    }
+  </main>
+</PageLayout>

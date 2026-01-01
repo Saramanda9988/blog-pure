@@ -56,4 +56,29 @@ const docs = defineCollection({
     })
 })
 
-export const collections = { blog, docs }
+// Define notes collection (小记)
+const notes = defineCollection({
+  loader: glob({ base: './src/content/notes', pattern: '**/*.{md,mdx}' }),
+  schema: ({ image }) =>
+    z.object({
+      // Required
+      publishDate: z.coerce.date(),
+      // Optional
+      updatedDate: z.coerce.date().optional(),
+      tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
+      // Optional image
+      image: z
+        .object({
+          src: image(),
+          alt: z.string().optional()
+        })
+        .optional(),
+      // Location or context
+      location: z.string().optional(),
+      // Mood emoji or text
+      mood: z.string().optional(),
+      draft: z.boolean().default(false)
+    })
+})
+
+export const collections = { blog, docs, notes }
