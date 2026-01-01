@@ -1,6 +1,5 @@
 import { defineConfig, fontProviders } from 'astro/config'
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
-import vercel from '@astrojs/vercel'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 
@@ -36,8 +35,8 @@ export default defineConfig({
 
   // [Adapter]
   // https://docs.astro.build/en/guides/deploy/
-  adapter: vercel(),
-  output: 'server',
+  // adapter: vercel(),
+  output: 'static',
   // Local (standalone)
   // adapter: node({ mode: 'standalone' }),
   // output: 'server',
