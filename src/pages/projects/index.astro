@@ -13,25 +13,24 @@ import wechat from '@/assets/wechat-qrcode.jpg'
 const headings = [
   { depth: 2, slug: 'programs', text: 'Programs' },
   { depth: 2, slug: 'learnings', text: 'Learnings' },
-  { depth: 2, slug: 'others', text: 'Others' },
+  { depth: 2, slug: 'contributions', text: 'Contributions' },
   { depth: 2, slug: 'gpg-signature', text: 'GPG Signature' },
-  { depth: 2, slug: 'sponsorship', text: 'Sponsorship' }
+  // { depth: 2, slug: 'sponsorship', text: 'Sponsorship' }
 ]
 ---
 
 <PageLayout title='Projects' {headings} view>
-  <p>Github Activities:</p>
+  <!-- <p>Github Activities:</p>
   <p>
     <Image
-      src='https://ghchart.rshah.org/659eb9/cworld1'
+      src='https://ghchart.rshah.org/Saramanda9988'
       alt='github activities'
       inferSize
       loading='lazy'
     />
-  </p>
+  </p> -->
   <p>
-    If you think it would be useful or interesting to collaborate on a project, you can donate to
-    support my work or contact me to discuss a project.
+    如果你认为我的工作很有用或有趣，您可以捐赠以支持我的工作，或联系我讨论项目。
   </p>
   <Button title='Checkout sponsorship' class='w-fit' href='#sponsorship'>
     <Icon class='size-5' name='receive-money' slot='before' />
@@ -41,45 +40,32 @@ const headings = [
   <ProjectSection
     projects={[
       {
-        name: '🎨 Astro Theme Pure',
-        description: 'A simple, fast and powerful blog & document theme built by Astro',
+        name: 'LunaBox',
+        description: 'Lightweight, fast, and feature-rich visual novel management and game statistics tool',
         links: [
-          { type: 'github', href: 'https://github.com/cworld1/astro-theme-pure' },
-          { type: 'site', href: 'https://astro-pure.js.org/' },
-          { type: 'doc', href: 'https://astro-pure.js.org/docs/list' },
-          { type: 'release', href: 'https://www.npmjs.com/package/astro-pure' }
+          { type: 'github', href: 'https://github.com/Saramanda9988/LunaBox' },
+          { type: 'site', href: 'https://box.lunarain.site/' },
+          { type: 'doc', href: 'https://box.lunarain.site/guide/introduction.html' },
+          { type: 'release', href: 'https://github.com/Saramanda9988/LunaBox/releases' }
         ]
       },
-      {
-        name: '💄 PKU Art',
-        description: 'A script to beautify pku course website',
-        links: [
-          { type: 'github', href: 'https://github.com/zhuozhiyongde/pku-art' },
-          { type: 'site', href: 'https://github.com/zhuozhiyongde/pku-art' },
-          { type: 'doc', href: 'https://docs.arthals.ink/docs/pku-art' }
-        ]
-      }
     ]}
   />
   <Collapse title='Some old projects'>
     <ProjectSection
       projects={[
         {
-          name: '🧩 rehype-autolink-headings-simple',
-          description: 'A simple version of rehype-autolink-headings',
+          name: 'TogetherChat',
+          description: '支持在线聊天，直播，协作的轻量级IM平台',
           links: [
-            { type: 'github', href: 'https://github.com/cworld1/rehype-autolink-headings-simple' },
-            {
-              type: 'release',
-              href: 'https://www.npmjs.com/package/rehype-autolink-headings-simple'
-            }
+            { type: 'github', href: 'https://github.com/Saramanda9988/TogetherChat' },
           ]
         },
         {
-          name: 'Gaussian NB',
+          name: 'DeepLuna',
           description:
-            'Simulating the Parsimonious Bayesian Algorithm with Python and Finding the Probability Prediction of Breast Cancer ',
-          links: [{ type: 'github', href: 'https://github.com/cworld1/gaussian-nb' }]
+            '简易的基于 Spring Boot 和 Spring AI 的多 agent 研究与检索系统',
+          links: [{ type: 'github', href: 'https://github.com/Saramanda9988/DeepLuna' }]
         }
       ]}
     />
@@ -90,39 +76,41 @@ const headings = [
     class='my-2'
     projects={[
       {
-        name: 'R Learning',
-        description: 'Some notes and code about learning R language',
-        links: [
-          { type: 'github', href: 'https://github.com/cworld1/r-learning' },
-          { type: 'site', href: 'https://cworld1.github.io/r-learning' }
-        ]
-      },
-      {
-        name: 'CS 213 Learning',
-        description: 'Notes, code and experiences for Introduction to Computer Systems course',
+        name: '6.5840',
+        description: 'Distributed systems',
         links: [
           {
             type: 'github',
-            href: 'https://github.com/zhuozhiyongde/Introduction-To-Computer-System-2023Fall-PKU'
+            href: 'https://github.com/Saramanda9988/6.5840Lab'
           }
         ]
       }
     ]}
   />
 
-  <h2 id='others'>Others</h2>
+  <h2 id='others'>Contributions</h2>
   <ProjectSection
     projects={[
       {
-        name: 'CWorld',
-        description: "CWorld's Github",
-        links: [{ type: 'github', href: 'https://github.com/cworld1' }]
+        name: 'hertzbeat',
+        description: "An AI-powered next-generation open source real-time observability system.",
+        links: [{ type: 'github', href: 'https://github.com/apache/hertzbeat' }]
       },
       {
-        name: 'Arthals',
-        description: 'Arthals Github',
-        links: [{ type: 'github', href: 'https://github.com/zhuozhiyongde' }]
-      }
+        name: 'TranslateProject',
+        description: '参考 Linux 中国翻译项目，设计我们开源俱乐部的翻译项目 HCTT(HUST openatom Club Translation Team)',
+        links: [
+          { type: 'github', href: 'https://github.com/hust-open-atom-club/TranslateProject' },
+          { type: 'site', href: 'https://hctt.openatom.club/' }
+        ]
+      },
+      {
+        name: 'astrbot-qq-group-daily-analysis',
+        description: 'QQ群日常分析插件 - 生成精美的群聊分析报告，支持话题分析、用户称号、群聊金句等功能',
+        links: [
+          { type: 'github', href: 'https://github.com/SXP-Simon/astrbot-qq-group-daily-analysis' },
+        ]
+      },
     ]}
   />
 
@@ -135,26 +123,21 @@ const headings = [
     <KeyIcon class='size-5' slot='before' />
   </Button>
 
-  <h2 id='sponsorship'>Sponsorship</h2>
+  <!-- <h2 id='sponsorship'>Sponsorship</h2>
   <p>Please leave a message or contact me proactively after sponsorship.</p>
   <Sponsorship
     methods={[
       { name: 'WeChat', icon: 'wechat-pay', image: wechat },
       { name: 'Alipay', icon: 'alipay', image: alipay }
     ]}
-  />
-  <p>Thanks to the following sponsors:</p>
+  /> -->
+  <!-- <p>Thanks to the following sponsors:</p>
   <Sponsors
     progressMax={25}
     sponsors={[
       { name: 'Arthals', platform: 'Wechat', amount: 50, date: '2025-11-06' },
-      { name: '顾**', platform: 'Wechat', amount: 28, date: '2025-06-23' },
-      { name: 'Anonymous', platform: 'Wechat', amount: 20, date: '2022-04-06' },
-      { name: '华雄 (1300****71)', platform: 'QQ', amount: 5, date: '2019-12-30' },
-      { name: '◌ (1934****45)', platform: 'QQ', amount: 3, date: '2019-12-30' },
-      { name: 'C*a (酷安@暴走の蜗牛)', amount: 2, date: '2019-07-02' }
     ]}
-  />
+  /> -->
 </PageLayout>
 
 <style>

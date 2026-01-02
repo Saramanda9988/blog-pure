@@ -5,16 +5,40 @@
       "desc": "Common links included in circle friends",
       "link_list": [
         {
-          "name": "Arthals' ink",
-          "intro": "所见高山远木，阔云流风；所幸岁月盈余，了无拘束",
-          "link": "https://arthals.ink/",
-          "avatar": "https://cdn.arthals.ink/Arthals.png"
+          "name": "Hibernator",
+          "link": "https://vorest0628.github.io",
+          "avatar": "/photos/about.png",
+          "intro": "一位兴趣使然，涉猎音游/AI/前端的otaku"
         },
         {
-          "name": "CWorld Site",
-          "intro": "求知若愚，虚怀若谷",
-          "link": "https://cworld0.com/",
-          "avatar": "https://cravatar.cn/avatar/1ffe42aa45a6b1444a786b1f32dfa8aa?s=200"
+          "name": "PurplePlanen",
+          "link": "https://www.purpleplanen.top",
+          "avatar": "/photos/logo.png",
+          "intro": "紫翼天航-FE链接地"
+        },
+        {
+          "name": "Immortal",
+          "link": "https://blog.immortel.top",
+          "avatar": "/photos/Immortal.jpg",
+          "intro": "Cherish every moment."
+        },
+        {
+          "name": "小海",
+          "link": "https://norubias.site/#/",
+          "avatar": "/photos/ELbK6urJqYvgBPj.jpg",
+          "intro": "小海的角落"
+        },
+        {
+          "avatar": "/photos/Rlogo.png",
+          "name": "RobinElysia",
+          "intro": "We are always devout scholars",
+          "link": "http://elysia.wiki:222/"
+        },
+        {
+          "avatar": "/photos/91131723.png",
+          "name": "rand777",
+          "intro": "摇摇晃晃，也能到达目的地。",
+          "link": "https://blog.rand777.space/"
         }
       ]
     },
