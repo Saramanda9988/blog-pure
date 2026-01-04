@@ -158,7 +158,7 @@ export const integ: IntegrationUserConfig = {
   waline: {
     enable: true,
     // Server service link
-    server: 'https://waline-snowy-beta.vercel.app',
+    server: 'https://comment.lunarain.top/',
     // Show meta info for comments
     showMeta: false,
     // Refer https://waline.js.org/en/guide/features/emoji.html
