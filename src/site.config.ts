@@ -5,7 +5,7 @@ export const theme: ThemeUserConfig = {
   /** Title for your website. Will be used in metadata and as browser tab title. */
   title: 'Lunarain_079\'s Inn',
   /** Will be used in index page & copyright declaration */
-  author: '独酌清月',
+  author: 'Lunarain_079',
   /** Description metadata for your website. Can be used in page metadata. */
   description: '暂伴月将影 行乐须及春',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */

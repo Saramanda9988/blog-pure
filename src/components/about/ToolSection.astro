@@ -48,7 +48,7 @@ function isImageMetadata(obj: unknown): obj is ImageMetadata {
                 ) : (
                   <Svg
                     src={tool.icon}
-                    class='size-10 rounded-lg bg-card fill-foreground p-2 dark:hidden'
+                    class='size-10 rounded-lg bg-card p-2 dark:hidden'
                   />
                 )}
 
@@ -63,7 +63,7 @@ function isImageMetadata(obj: unknown): obj is ImageMetadata {
                 ) : (
                   <Svg
                     src={tool.darkIcon}
-                    class='size-10 rounded-lg bg-card fill-foreground p-2 hidden dark:block'
+                    class='size-10 rounded-lg bg-card p-2 hidden dark:block'
                   />
                 )}
               </>
@@ -74,7 +74,7 @@ function isImageMetadata(obj: unknown): obj is ImageMetadata {
                     <Image src={tool.icon} alt={tool.name} class='h-full w-full object-contain' />
                   </div>
                 ) : (
-                  <Svg src={tool.icon} class='size-10 rounded-lg bg-card fill-foreground p-2' />
+                  <Svg src={tool.icon} class='size-10 rounded-lg bg-card p-2' />
                 )}
               </>
             )}
