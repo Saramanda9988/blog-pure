@@ -87,6 +87,12 @@ const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url)
 <meta content={Astro.generator} name='generator' />
 
 {
+  config.head.map(({ tag: Tag, attrs, content }) => (
+    <Tag {...attrs} set:html={content} />
+  ))
+}
+
+{
   /* User script*/
   prod && (
     <script>
