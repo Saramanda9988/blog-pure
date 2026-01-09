@@ -284,3 +284,23 @@ span.katex-display {
     border-radius: 999px;
   }
 }
+
+/* [Image Caption] */
+figure.image-figure {
+  margin: 1.5rem 0;
+  text-align: center;
+
+  & img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 0.5rem;
+  }
+
+  & figcaption.image-caption {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground) / 0.8);
+    line-height: 0.5;
+    font-weight: 300;
+  }
+}
