@@ -140,11 +140,8 @@ module.exports = (args, opts) => {
     }
 
     var value = !flags.strings[key] && isNumber(val) ? Number(val) : val
-    setKey(
-      argv,
-      key.split('.'),
-      value
-    )(aliases[key] || []).forEach((x) => {
+    setKey(argv, key.split('.'), value)
+    ;(aliases[key] || []).forEach((x) => {
       setKey(argv, x.split('.'), value)
     })
   }
