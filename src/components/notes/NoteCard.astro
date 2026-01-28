@@ -4,6 +4,7 @@ import { render, type CollectionEntry } from 'astro:content'
 
 import { cn } from 'astro-pure/utils'
 import { Button, FormattedDate, Icon } from 'astro-pure/user'
+import NoteCardStyles from './NoteCardStyles.astro'
 
 interface Props {
   note: CollectionEntry<'notes'>
@@ -17,9 +18,11 @@ const { Content } = await render(note)
 const noteDate = data.updatedDate ?? data.publishDate
 ---
 
+<NoteCardStyles />
+
 <article
   class={cn(
-    'note-card group relative rounded-2xl border bg-background p-4 sm:p-5 transition-colors hover:bg-muted',
+    'note-card group relative rounded-2xl border bg-background p-4 sm:p-5 transition-colors hover:bg-muted overflow-hidden min-w-0',
     className
   )}
 >
@@ -46,7 +49,7 @@ const noteDate = data.updatedDate ?? data.publishDate
   </div>
 
   {/* Content */}
-  <div class='prose prose-sm max-w-none text-foreground'>
+  <div class='prose prose-sm max-w-none text-foreground overflow-x-auto break-words'>
     <Content />
   </div>
 

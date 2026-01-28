@@ -1,0 +1,41 @@
+---
+// Additional styles for note card prose content overflow handling
+---
+
+<style is:global>
+  /* Ensure code blocks and pre tags don't overflow */
+  .note-card .prose pre {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  .note-card .prose code {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* Handle tables overflow */
+  .note-card .prose table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  /* Handle long URLs and text */
+  .note-card .prose a {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* Prevent images from overflowing */
+  .note-card .prose img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Handle inline code */
+  .note-card .prose :not(pre) > code {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+</style>
