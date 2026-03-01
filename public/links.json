@@ -39,6 +39,24 @@
           "name": "rand777",
           "intro": "摇摇晃晃，也能到达目的地。",
           "link": "https://blog.rand777.space/"
+        },
+        {
+          "name": "SOV710",
+          "link": "https://blog.sov710.org",
+          "avatar": "https://assets.sov710.org/images/meta/avatar.png",
+          "intro": "新生的鼓动啊，回响吧。少女此刻，开启青色的魔法。"
+        },
+        {
+          "name": "柳上川",
+          "link": "https://kawayww.com",
+          "avatar": "https://kawayww.com/images/blog/avatar.avif",
+          "intro": "宁可清贫自乐, 不作浊富多忧"
+        },
+        {
+          "name": "寒冰是喵喵",
+          "link": "https://blog.hanbings.io",
+          "avatar": "https://blog.hanbings.io/img/avatar.jpg",
+          "intro": "🍀 这里是寒冰，很高兴认识你！"
         }
       ]
     },

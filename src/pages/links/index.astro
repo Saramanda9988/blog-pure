@@ -7,7 +7,7 @@ import PageLayout from '@/layouts/CommonPage.astro'
 import FriendList from '@/components/links/FriendList.astro'
 
 const headings = [
-  { depth: 2, slug: 'common-links', text: 'Common Links' },
+  { depth: 2, slug: 'common-links', text: "Friends\' Links" },
   { depth: 2, slug: 'special-links', text: 'Special Links' },
   { depth: 2, slug: 'apply-links', text: 'Apply Links' }
 ]
@@ -19,7 +19,7 @@ const linkEditPage = 'https://github.com/cworld1/astro-theme-pure/blob/main/publ
 
 <PageLayout title='Links' {headings} comment>
   <p>They're sorted randomly.</p>
-  <h2 id='common-links'>Common Links</h2>
+  <h2 id='common-links'>Friends' Links</h2>
   <FriendList list={friends[0]} />
   <!-- <Collapse title='Links with Bad Status'>
     <FriendList list={friends[1]} />
