@@ -3,8 +3,8 @@ title: 'wails v2从夸夸到劝退'
 description: '碎碎念一些wails v2的小问题(可能已经被别人吐槽烂了？)'
 publishDate: 2026-01-09
 tags:
-  - Example
-  - Technology
+  - Wails V2
+  - 笔记
 heroImage: { src: './thumbnail.png', color: 'rgb(80, 108, 157)' }
 ---
 
