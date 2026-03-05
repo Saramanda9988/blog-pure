@@ -114,7 +114,7 @@ export const integ: IntegrationUserConfig = {
       { name: 'Name', val: theme.title },
       { name: 'Desc', val: theme.description || 'Null' },
       { name: 'Link', val: 'https://www.lunarain.top/' },
-      { name: 'Avatar', val: 'https://79d93ce9.blog-pure.pages.dev/favicon/favicon.ico' }
+      { name: 'Avatar', val: 'https://www.lunarain.top/avatar.png' }
     ],
     // Cache avatars in `public/avatars/` to improve user experience.
     cacheAvatar: false
