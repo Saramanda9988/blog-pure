@@ -165,6 +165,8 @@ export const integ: IntegrationUserConfig = {
     showMeta: false,
     // Refer https://waline.js.org/en/guide/features/emoji.html
     emoji: ['bmoji', 'weibo'],
+    // https://waline.js.org/reference/client/props.html#norss
+    noRss: true,
     // Refer https://waline.js.org/en/reference/client/props.html
     additionalConfigs: {
       // search: false,
