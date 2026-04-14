@@ -1,0 +1,92 @@
+---
+title: '对OpenClaw内存优化等的探索'
+description: '从磁盘占用和内存占用两个方面，分析了OpenClaw轻量化的过程，并进行了一些优化'
+publishDate: 2026-04-14
+tags:
+  - 瞎鼓捣
+  - agent
+heroImage: { src: './thumbnail.jpg', color: 'rgb(184, 190, 201)' }
+---
+
+import { Aside } from 'astro-pure/user'
+
+因为一些原因，我接触了部分openclaw的优化任务，比较头疼的的当属内存占用的优化了
+
+先是写了一些benchmark，测出openclaw的Settled RSS能干到300mb，Peak RSS也能爆到800mb+，属实是有点多了
+
+<Aside type="tip">
+  本人之前也没有什么v8调优经验，也算是第一次接触v8调优，下面大部分过程都是ai + 我实现的（我和科比合砍81分这一块），仅供学习参考
+</Aside>
+  
+# 从堆快照推断"大量 import 导致内存暴涨"
+
+首先肯定是让ai写个bench脚本，先打一个.heapsnapshot，看看内存占用的情况：
+
+![](/photos/openclaw1.png)
+
+第一眼就能看到最大的global，占据了几乎100%的内存，但是先不急，先看看浅层大小下谁占用最高
+
+![](/photos/openclaw2.png)
+
+![](/photos/openclaw3.png)
+
+string看起来占用很高，浅层大小就占据了28%的大小，点开看一看
+
+![](/photos/openclaw4.png)
+
+好家伙，一眼看过去是各种各样的import和require的字符串，总共有124000+!
+
+火速截上两个图发送给claude分析一下
+
+> Heap Snapshot 保留器 (Retainer) 视图的关键发现:
+> - `global → Module` 对象链的保留大小为 **~190.6 MiB**
+> - 这基本等于整个 V8 heap used (~189 MiB)
+> - 意味着 **几乎所有堆内存都被 Node.js Module 系统的引用链所保留**
+
+claude一出手，就发现几乎所有服务都在server.impl.ts的顶层被引用了，导致所有的模块都被加载
+
+| 服务 | 源文件 | 加载方式 | 说明 |
+| --- | --- | --- | --- |
+| **browser/server** | `server-browser.ts` | **懒加载** ✓ | `await import("../browser/server.js")` |
+| **Server (HTTP/WS)** | `server-ws-runtime.ts` | **Eager** | `server.impl.ts` 顶层导入 |
+| **Gmail Watcher** | `gmail-watcher-lifecycle.ts` | **Eager** | `server-startup.ts` 顶层导入 |
+| **Bonjour (mDNS)** | `server-discovery-runtime.ts` | **Eager** | `server.impl.ts` 顶层导入 |
+| **Plugins** | `server-plugins.ts` | **Eager** | loader 顶层导入, 实现按插件加载 |
+| **Canvas** | `canvas-host/server.ts` | **Eager** | 顶层导入 |
+| **Heartbeat** | `heartbeat-runner.ts` | **Eager** | `server.impl.ts` 顶层导入 |
+| **Health Monitor** | `channel-health-monitor.ts` | **Eager** | `server.impl.ts` 顶层导入 |
+
+Node.js 的 ESM import 是静态的、同步求值的 —— 即使你在运行时不会用到 gmail-watcher（比如没配 gmail 账号），它的整个模块树（包括它的依赖、依赖的依赖）都已经被加载到内存里了。
+
+对几个用不到的模块进行了懒加载改造后，内存占用从300mb降到了250mb上下浮动，优化了20%左右
+
+如果我们继续深入优化，理论上可以降得更多，但考虑到后续维护的复杂度和收益率，这个优化就先告一段落了
+
+# V8 参数调优（--max-semi-space-size=8）
+
+另外，claude通过分析benchmark中脚本每秒采样(v8.getHeapSpaceStatistics())，发现
+
+| 空间	| Ready 时 | Settled 时	| 变化 |
+| --- | --- | --- | --- |
+| new_space | 106 MiB	| 2 MiB	| -104 MiB |
+| old_space	| 175 MiB	| 157 MiB	| -18 MiB |
+
+> new_space 就是 V8 的 young generation（新生代）。启动时产生大量短命临时对象（模块加载时的中间 AST、临时字符串拼接等），V8 自动扩张 new_space 到 106 MiB 来容纳它们。启动完成后 Scavenge GC 回收，new_space 收缩回 2 MiB。 
+>
+> 但 RSS 不会跟着降。Linux 的内存分配是"只升不降" —— V8 向 OS 申请了 106 MiB 用于 new_space，GC 后虽然不用了，但这些页面仍然计入 RSS（除非显式调用 madvise(MADV_FREE)，V8 通常不做）。
+>
+> --max-semi-space-size=N 限制 V8 semi-space（new_space 的一半）的最大大小。设为 8 MiB 意味着 new_space 最大 16 MiB（两个 semi-space），而不是放任膨胀到 106 MiB。
+>
+> 代价是启动时 Scavenge GC 更频繁（因为 new_space 更小，填满得更快），但这只影响启动阶段的几百毫秒，对运行时几乎无感。
+
+设置了这个参数后，new_space的占用就被限制在了16mb，Peak RSS从 402mb 降了 95mb到 307mb, Settled RSS基本没有什么变化，也符合预期
+
+# DLC：磁盘占用优化
+
+最后是磁盘占用的优化了，之前的占用能干到1.6gb，经过分析发现主要是因为dlc中包含了大量的node_modules依赖，都默认下载下来
+
+最大的当属node-llama-cpp，单这个依赖就占了600mb左右，它只在使用本地进行embedded的时候才会被使用，整条链路也做了可选处理，但还是被尽可能下载了下来，有点bt了
+
+最后也给杂七杂八的依赖做了类似的处理，最终把dlc的占用从1.6gb降到了200mb左右，优化了80%以上
+
+
