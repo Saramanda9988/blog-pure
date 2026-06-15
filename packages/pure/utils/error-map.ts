@@ -4,13 +4,23 @@
  */
 
 import { AstroError } from 'astro/errors'
-import type { z } from 'astro:content'
+import { z } from 'astro/zod'
 
 type TypeOrLiteralErrByPathEntry = {
-  code: 'invalid_type' | 'invalid_literal'
+  code: 'invalid_type' | 'invalid_value'
   received: unknown
   expected: unknown[]
 }
+
+type ZodIssueLike = z.core.$ZodIssue & {
+  input?: unknown
+  message?: string
+  path?: PropertyKey[]
+}
+
+type ExpectedIssue =
+  | { code: 'invalid_type'; expected: unknown }
+  | { code: 'invalid_value'; values: readonly unknown[] }
 
 /**
  * Parse data with a Zod schema and throw a nicely formatted error if it is invalid.
@@ -25,7 +35,7 @@ export function parseWithFriendlyErrors<T extends z.Schema>(
   input: z.input<T>,
   message: string
 ): z.output<T> {
-  return processParsedData(schema.safeParse(input, { errorMap }), message)
+  return processParsedData(schema.safeParse(input, { error: errorMap }), message)
 }
 
 /**
@@ -42,11 +52,11 @@ export async function parseAsyncWithFriendlyErrors<T extends z.Schema>(
   input: z.input<T>,
   message: string
 ): Promise<z.output<T>> {
-  return processParsedData(await schema.safeParseAsync(input, { errorMap }), message)
+  return processParsedData(await schema.safeParseAsync(input, { error: errorMap }), message)
 }
 
 function processParsedData<TSchema extends z.Schema>(
-  parsedData: z.SafeParseReturnType<z.output<TSchema>, z.input<TSchema>>,
+  parsedData: z.ZodSafeParseResult<z.output<TSchema>>,
   message: string
 ): z.output<TSchema> {
   if (!parsedData.success) {
@@ -55,7 +65,9 @@ function processParsedData<TSchema extends z.Schema>(
   return parsedData.data
 }
 
-const errorMap: z.ZodErrorMap = (baseError, ctx) => {
+const errorMap: z.core.$ZodErrorMap = (baseError) => formatIssue(baseError as ZodIssueLike)
+
+const formatIssue = (baseError: ZodIssueLike): { message: string } => {
   const baseErrorPath = flattenErrorPath(baseError.path)
   if (baseError.code === 'invalid_union') {
     // Optimization: Combine type and literal errors for keys that are common across ALL union types
@@ -64,19 +76,18 @@ const errorMap: z.ZodErrorMap = (baseError, ctx) => {
     // > Did not match union.
     // > key: Expected `'tutorial' | 'blog'`, received 'foo'
     const typeOrLiteralErrByPath: Map<string, TypeOrLiteralErrByPathEntry> = new Map()
-    for (const unionError of baseError.unionErrors.flatMap((e) => e.errors)) {
-      if (unionError.code === 'invalid_type' || unionError.code === 'invalid_literal') {
+    for (const unionError of baseError.errors.flat()) {
+      if (unionError.code === 'invalid_type' || unionError.code === 'invalid_value') {
         const flattenedErrorPath = flattenErrorPath(unionError.path)
         if (typeOrLiteralErrByPath.has(flattenedErrorPath)) {
           typeOrLiteralErrByPath
             .get(flattenedErrorPath)
-            ?.expected.push((unionError as { expected: unknown }).expected)
+            ?.expected.push(...getExpectedValues(unionError))
         } else {
           typeOrLiteralErrByPath.set(flattenedErrorPath, {
             code: unionError.code,
-            received:
-              'received' in unionError ? (unionError as { received: unknown }).received : undefined,
-            expected: [(unionError as { expected: unknown }).expected]
+            received: unionError.input,
+            expected: getExpectedValues(unionError)
           })
         }
       }
@@ -85,7 +96,7 @@ const errorMap: z.ZodErrorMap = (baseError, ctx) => {
     const details: string[] = [...typeOrLiteralErrByPath.entries()]
       // If type or literal error isn't common to ALL union types,
       // filter it out. Can lead to confusing noise.
-      .filter(([, error]) => error.expected.length === baseError.unionErrors.length)
+      .filter(([, error]) => error.expected.length === baseError.errors.length)
       .map(([key, error]) =>
         key === baseErrorPath
           ? // Avoid printing the key again if it's a base error
@@ -95,13 +106,13 @@ const errorMap: z.ZodErrorMap = (baseError, ctx) => {
 
     if (details.length === 0) {
       const expectedShapes: string[] = []
-      for (const unionError of baseError.unionErrors) {
+      for (const unionError of baseError.errors) {
         const expectedShape: string[] = []
-        for (const issue of unionError.issues) {
+        for (const issue of unionError) {
           // If the issue is a nested union error, show the associated error message instead of the
           // base error message.
           if (issue.code === 'invalid_union') {
-            return errorMap(issue, ctx)
+            return formatIssue(issue)
           }
           const relativePath = flattenErrorPath(issue.path)
             .replace(baseErrorPath, '')
@@ -121,29 +132,28 @@ const errorMap: z.ZodErrorMap = (baseError, ctx) => {
       }
       if (expectedShapes.length) {
         details.push(`> Expected type \`${expectedShapes.join(' | ')}\``)
-        details.push(`> Received \`${stringify(ctx.data)}\``)
+        details.push(`> Received \`${stringify(baseError.input)}\``)
       }
     }
 
     return {
       message: messages.concat(details).join('\n')
     }
-  } else if (baseError.code === 'invalid_literal' || baseError.code === 'invalid_type') {
+  } else if (baseError.code === 'invalid_value' || baseError.code === 'invalid_type') {
     return {
       message: prefix(
         baseErrorPath,
         getTypeOrLiteralMsg({
           code: baseError.code,
-          received:
-            'received' in baseError ? (baseError as { received: unknown }).received : undefined,
-          expected: [(baseError as { expected: unknown }).expected]
+          received: baseError.input,
+          expected: getExpectedValues(baseError)
         })
       )
     }
   } else if (baseError.message) {
     return { message: prefix(baseErrorPath, baseError.message) }
   } else {
-    return { message: prefix(baseErrorPath, ctx.defaultError) }
+    return { message: prefix(baseErrorPath, 'Invalid value') }
   }
 }
 
@@ -156,19 +166,22 @@ const getTypeOrLiteralMsg = (error: TypeOrLiteralErrByPathEntry): string => {
       return `Expected type \`${unionExpectedVals(expectedDeduped)}\`, received \`${stringify(
         error.received
       )}\``
-    case 'invalid_literal':
+    case 'invalid_value':
       return `Expected \`${unionExpectedVals(expectedDeduped)}\`, received \`${stringify(
         error.received
       )}\``
   }
 }
 
+const getExpectedValues = (issue: ExpectedIssue) =>
+  'expected' in issue ? [issue.expected] : [...issue.values]
+
 const prefix = (key: string, msg: string) => (key.length ? `**${key}**: ${msg}` : msg)
 
 const unionExpectedVals = (expectedVals: Set<unknown>) =>
   [...expectedVals].map((expectedVal) => stringify(expectedVal)).join(' | ')
 
-const flattenErrorPath = (errorPath: (string | number)[]) => errorPath.join('.')
+const flattenErrorPath = (errorPath: PropertyKey[] = []) => errorPath.join('.')
 
 /** `JSON.stringify()` a value with spaces around object/array entries. */
 const stringify = (val: unknown) =>

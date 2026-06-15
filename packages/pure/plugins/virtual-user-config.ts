@@ -11,6 +11,10 @@ export function resolveCollectionPath(collection: DefaultCollection, srcDir: URL
   return resolve(fileURLToPath(srcDir), `content/${collection}`)
 }
 
+type LegacyConfig = Pick<AstroConfig['legacy'], 'collectionsBackwardsCompat'> & {
+  collections?: boolean
+}
+
 function resolveVirtualModuleId<T extends string>(id: T): `\0${T}` {
   return `\0${id}`
 }
@@ -26,7 +30,7 @@ export function vitePluginUserConfig(
     trailingSlash
   }: Pick<AstroConfig, 'root' | 'srcDir' | 'trailingSlash'> & {
     build: Pick<AstroConfig['build'], 'format'>
-    legacy: Pick<AstroConfig['legacy'], 'collections'>
+    legacy: LegacyConfig
   }
 ): NonNullable<ViteUserConfig['plugins']>[number] {
   /**
@@ -45,15 +49,17 @@ export function vitePluginUserConfig(
    * resolveLocalPath('../utils/git.ts');
    * // => '"/users/houston/docs/node_modules/@astrojs/starlight/utils/git.ts"'
    */
+  const legacyCollections = legacy.collectionsBackwardsCompat ?? legacy.collections ?? false
+
   let collectionConfigImportPath = resolve(
     fileURLToPath(srcDir),
-    legacy.collections ? './content/config.ts' : './content.config.ts'
+    legacyCollections ? './content/config.ts' : './content.config.ts'
   )
 
   // If not using legacy collections and the config doesn't exist, fallback to the legacy location.
   // We need to test this ahead of time as we cannot `try/catch` a failing import in the virtual
   // module as this would fail at build time when Rollup tries to resolve a non-existent path.
-  if (!legacy.collections && !existsSync(collectionConfigImportPath)) {
+  if (!legacyCollections && !existsSync(collectionConfigImportPath)) {
     collectionConfigImportPath = resolve(fileURLToPath(srcDir), './content/config.ts')
   }
 
@@ -62,7 +68,7 @@ export function vitePluginUserConfig(
     'virtual:config': `export default ${JSON.stringify(opts)}`,
     'virtual:project-context': `export default ${JSON.stringify({
       build: { format: build.format },
-      legacyCollections: legacy.collections,
+      legacyCollections,
       root,
       srcDir,
       trailingSlash
