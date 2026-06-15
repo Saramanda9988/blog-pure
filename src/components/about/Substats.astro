@@ -1,5 +1,5 @@
 ---
-import { type iconsType, socialLinks } from 'astro-pure/types'
+import { socialLinks, type iconsType } from 'astro-pure/types'
 import { Icon } from 'astro-pure/user'
 
 interface SubstatsItem {
@@ -7,7 +7,7 @@ interface SubstatsItem {
   icon: (typeof socialLinks)[number]
   color?: string
   link?: string
-  text: string
+  text?: string
   api?: string
   count?: number
 }
@@ -17,6 +17,7 @@ type Props = {
 }
 
 const { stats } = Astro.props as Props
+const hasSubstatsApi = stats.some(({ api }) => api)
 
 async function fetchCount(item: SubstatsItem) {
   if (!item.api) return
@@ -33,12 +34,12 @@ async function fetchCount(item: SubstatsItem) {
   }
 }
 
-await Promise.all(stats.map(fetchCount))
+await Promise.all(stats.filter(({ api }) => api).map(fetchCount))
 ---
 
 <div class='grid grid-cols-1 gap-3 rounded-xl border p-2 sm:grid-cols-2 sm:p-3'>
   {
-    stats.map(({ link, platform, icon, color, count, text }) => (
+    stats.map(({ link, platform, icon, color, count, text, api }) => (
       <a
         class='group text-muted-foreground no-underline'
         href={link}
@@ -50,24 +51,29 @@ await Promise.all(stats.map(fetchCount))
           <div class='flex-1 text-foreground transition-colors group-hover:text-primary'>
             {platform}
           </div>
-          {count ? (
+          {api && count != null && (
             <div class='flex items-center gap-1.5'>
               <samp>{count}</samp>
-              <span class='text-sm font-normal'>{text}</span>
+              {text && <span class='text-sm font-normal'>{text}</span>}
             </div>
-          ) : (
-            'null'
           )}
         </div>
       </a>
     ))
   }
 </div>
-<div class='mt-2 text-right text-sm'>
-  Display real-time; powered by <a
-    class='text-muted-foreground'
-    href='http://github.com/spencerwooo/substats'
-    target='_blank'
-    rel='noopener noreferrer'>Substats</a
-  >
-</div>
+{
+  hasSubstatsApi && (
+    <div class='mt-2 text-right text-sm'>
+      Display real-time; powered by{' '}
+      <a
+        class='text-muted-foreground'
+        href='http://github.com/spencerwooo/substats'
+        target='_blank'
+        rel='noopener noreferrer'
+      >
+        Substats
+      </a>
+    </div>
+  )
+}

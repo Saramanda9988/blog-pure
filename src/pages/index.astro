@@ -11,9 +11,9 @@ import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
 import config from '@/site-config'
 
-const languages = ['Java', 'TypeScript/JavaScript', 'Go']
-const frontend = ['React', 'Vite', 'Vue', 'Astro', 'TailwindCSS', 'Unocss', 'Zustand', 'Tanstack Query', 'Tanstack Router']
-const backend = ['Spring Boot', 'Gin', 'MySQL', 'Redis', 'Docker', 'PostgreSQL', 'RabbitMQ', 'Kafka', 'Netty']
+// const languages = ['Java', 'TypeScript/JavaScript', 'Go']
+// const frontend = ['React', 'Vite', 'Vue', 'Astro', 'TailwindCSS', 'Unocss', 'Zustand', 'Tanstack Query', 'Tanstack Router']
+// const backend = ['Spring Boot', 'Gin', 'MySQL', 'Redis', 'Docker', 'PostgreSQL', 'RabbitMQ', 'Kafka', 'Netty']
 
 const MAX_POSTS = 10
 const allPosts = await getBlogCollection()
@@ -205,11 +205,11 @@ if (!images[imagePath])
         />
       </Section> -->
 
-      <Section title='Skills'>
+      <!-- <Section title='Skills'>
         <SkillLayout title='Languages' skills={languages} />
         <SkillLayout title='Frontend' skills={frontend} />
         <SkillLayout title='Backend' skills={backend} />
-      </Section>
+      </Section> -->
     </div>
     <Quote class='mt-12' />
   </main>

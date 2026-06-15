@@ -1,5 +1,5 @@
-import { defineConfig, fontProviders } from 'astro/config'
-import { rehypeHeadingIds } from '@astrojs/markdown-remark'
+import { defineConfig, fontProviders, svgoOptimizer } from 'astro/config'
+import { rehypeHeadingIds, unified } from '@astrojs/markdown-remark'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 
@@ -52,20 +52,22 @@ export default defineConfig({
 
   // [Markdown]
   markdown: {
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [
-      [rehypeKatex, {}],
-      rehypeHeadingIds,
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: 'append',
-          properties: { className: ['anchor'] },
-          content: { type: 'text', value: '#' }
-        }
-      ],
-      rehypeImageCaption
-    ],
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [
+        [rehypeKatex, {}],
+        rehypeHeadingIds,
+        [
+          rehypeAutolinkHeadings,
+          {
+            behavior: 'append',
+            properties: { className: ['anchor'] },
+            content: { type: 'text', value: '#' }
+          }
+        ],
+        rehypeImageCaption
+      ]
+    }),
     // https://docs.astro.build/en/guides/syntax-highlighting/
     shikiConfig: {
       themes: {
@@ -97,6 +99,23 @@ export default defineConfig({
     AstroPureIntegration(config)
   ],
 
+  // [Fonts]
+  fonts: [
+    {
+      provider: fontProviders.fontshare(),
+      name: 'Satoshi',
+      cssVariable: '--font-satoshi',
+      // Default included:
+      // weights: [400],
+      // styles: ["normal", "italics"],
+      // subsets: ["cyrillic-ext", "cyrillic", "greek-ext", "greek", "vietnamese", "latin-ext", "latin"],
+      // fallbacks: ["sans-serif"],
+      styles: ['normal', 'italic'],
+      weights: [400, 500],
+      subsets: ['latin']
+    }
+  ],
+
   // [Experimental]
   experimental: {
     // Allow compatible editors to support intellisense features for content collection entries
@@ -104,23 +123,6 @@ export default defineConfig({
     contentIntellisense: true,
     // Enable SVGO optimization for SVG assets
     // https://docs.astro.build/en/reference/experimental-flags/svg-optimization/
-    svgo: true,
-    // Enable font preloading and optimization
-    // https://docs.astro.build/en/reference/experimental-flags/fonts/
-    fonts: [
-      {
-        provider: fontProviders.fontshare(),
-        name: 'Satoshi',
-        cssVariable: '--font-satoshi',
-        // Default included:
-        // weights: [400],
-        // styles: ["normal", "italics"],
-        // subsets: ["cyrillic-ext", "cyrillic", "greek-ext", "greek", "vietnamese", "latin-ext", "latin"],
-        // fallbacks: ["sans-serif"],
-        styles: ['normal', 'italic'],
-        weights: [400, 500],
-        subsets: ['latin']
-      }
-    ]
+    svgOptimizer: svgoOptimizer()
   }
 })

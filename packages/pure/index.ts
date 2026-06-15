@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import type { AstroIntegration, RehypePlugins, RemarkPlugins } from 'astro'
 import { AstroError } from 'astro/errors'
 // Integrations
+import { isUnifiedProcessor, unified } from '@astrojs/markdown-remark'
 import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
 import UnoCSS from 'unocss/astro'
@@ -65,6 +66,16 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
         // Make table scrollable on overflow
         rehypePlugins.push(rehypeTable)
 
+        const currentMarkdownProcessor = config.markdown.processor
+        const markdownProcessor =
+          currentMarkdownProcessor && isUnifiedProcessor(currentMarkdownProcessor)
+            ? unified({
+                ...currentMarkdownProcessor.options,
+                remarkPlugins: [...currentMarkdownProcessor.options.remarkPlugins, ...remarkPlugins],
+                rehypePlugins: [...currentMarkdownProcessor.options.rehypePlugins, ...rehypePlugins]
+              })
+            : unified({ remarkPlugins, rehypePlugins })
+
         // Add Starlight directives restoration integration at the end of the list so that remark
         // plugins injected by Starlight plugins through Astro integrations can handle text and
         // leaf directives before they are transformed back to their original form.
@@ -82,8 +93,7 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
             plugins: [vitePluginUserConfig(userConfig, config)]
           },
           markdown: {
-            remarkPlugins,
-            rehypePlugins
+            processor: markdownProcessor
             // rehypePlugins: [rehypeRtlCodeSupport()],
             // shikiConfig:
             // Configure Shiki theme if the user is using the default github-dark theme.
