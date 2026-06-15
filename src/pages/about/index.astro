@@ -5,9 +5,9 @@ import Substats from '@/components/about/Substats.astro'
 import ToolSection from '@/components/about/ToolSection.astro'
 
 const headings = [
-  { depth: 2, slug: 'tools', text: 'Tools' },
+  { depth: 2, slug: 'tools', text: 'What am I using' },
   { depth: 2, slug: 'social-networks', text: 'Social Networks' },
-  { depth: 2, slug: 'gossips', text: 'Gossips' },
+  // { depth: 2, slug: 'gossips', text: 'Gossips' },
   { depth: 2, slug: 'about-blog', text: 'About Blog' }
 ]
 ---
@@ -32,13 +32,12 @@ const headings = [
     Galgame & Rhythm game enjoyer, Rock & Vocaloid listener
   </p>
   <p class='text-muted-foreground'>
-    ロックな心で生きようか
+    ロックな心で生きようか？！
   </p>
   <Button title='Sponsor Me' class='w-fit' href='/projects#sponsorship' variant='ahead' />
 
   {/* tools */}
-  <h2 id='tools'>Tools</h2>
-  <p>我在使用的一些工具:</p>
+  <h2 id='tools'>What am I using</h2>
   <ToolSection
     class='mb-5'
     title='Productivity'
@@ -50,23 +49,29 @@ const headings = [
         icon: import('@/assets/tools/chrome.svg?raw')
       },
       {
-        name: 'Firefox',
-        description: 'Browser',
-        href: 'https://www.mozilla.org/en-US/firefox',
-        icon: import('@/assets/tools/firefox.svg?raw')
-      },
-      {
         name: 'Siyuan Note',
         description: 'Note Taking',
         href: 'https://b3log.org/siyuan/',
         icon: import('@/assets/tools/siyuan.svg?raw')
+      }
+    ]}
+  />
+  <ToolSection
+    class='mb-5'
+    title='Gaming'
+    tools={[
+      {
+        name: 'Osu!',
+        description: 'Gaming',
+        href: 'https://osu.ppy.sh/',
+        icon: import('@/assets/tools/osu.svg?raw')
       },
       {
-        name: 'Clash Verge',
-        description: 'Proxy Client',
-        href: 'https://www.clashverge.dev/',
-        icon: import('@/assets/tools/clash.svg?raw')
-      }
+        name: 'LunaBox',
+        description: 'Galgame manager',
+        href: 'https://box.lunarain.site/',
+        icon: import('@/assets/tools/lunabox.svg?raw')
+      },
     ]}
   />
   <ToolSection
@@ -80,10 +85,10 @@ const headings = [
         icon: import('@/assets/tools/vscode.svg?raw')
       },
       {
-        name: 'Cursor',
-        description: 'IDE',
-        href: 'https://cursor.so/',
-        icon: import('@/assets/tools/cursor.svg?raw')
+        name: 'Codex',
+        description: 'Agent IDE',
+        href: 'https://chatgpt.com/',
+        icon: import('@/assets/tools/chatgpt.svg?raw')
       },
       {
         name: 'JetBrains IntelliJ IDEA',
@@ -110,16 +115,22 @@ const headings = [
         icon: import('@/assets/tools/archlinux.svg?raw')
       },
       {
-        name: 'Ubuntu 24.04 LTS',
-        description: 'Linux Distribution for WSL',
-        href: 'https://ubuntu.com/',
-        icon: import('@/assets/tools/ubuntu.svg?raw')
+        name: 'Fedora Workstation 44',
+        description: 'Mechrevo Yaoshi 15 Pro',
+        href: 'https://fedora.org/',
+        icon: import('@/assets/tools/fedora.svg?raw')
       },
       {
-        name: 'Windows 11',
+        name: 'Windows 11 23H2',
         description: 'Mechrevo Yaoshi 15 Pro',
         href: 'https://news.microsoft.com/windows11-general-availability/',
         icon: import('@/assets/tools/windows11.svg?raw')
+      },
+      {
+        name: 'MacOS Tahoe',
+        description: 'MacBook Air M2',
+        href: 'https://www.apple.com/macos/sonoma/',
+        icon: import('@/assets/tools/apple.svg?raw')
       }
     ]}
   />
