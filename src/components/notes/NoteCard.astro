@@ -2,8 +2,9 @@
 import { Image } from 'astro:assets'
 import { render, type CollectionEntry } from 'astro:content'
 
+import { FormattedDate, Icon } from 'astro-pure/user'
 import { cn } from 'astro-pure/utils'
-import { Button, FormattedDate, Icon } from 'astro-pure/user'
+
 import NoteCardStyles from './NoteCardStyles.astro'
 
 interface Props {
@@ -12,7 +13,7 @@ interface Props {
 }
 
 const { note, class: className } = Astro.props
-const { id, data, body } = note
+const { data } = note
 const { Content } = await render(note)
 
 const noteDate = data.updatedDate ?? data.publishDate

@@ -3,15 +3,15 @@ import { dirname, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 // Astro
 import type { AstroIntegration, RehypePlugins, RemarkPlugins } from 'astro'
-import { AstroError } from 'astro/errors'
 // Integrations
 import { isUnifiedProcessor, unified } from '@astrojs/markdown-remark'
 import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
-import UnoCSS from 'unocss/astro'
+import UnoCSS from '@unocss/astro'
+import { AstroError } from 'astro/errors'
 
 import rehypeExternalLinks from './plugins/rehype-external-links'
-import rehypeTable from './plugins/rehype-table'
+import { rehypeImageCaption } from './plugins/rehype-image-caption'
 import { remarkAddZoomable, remarkReadingTime } from './plugins/remark-plugins'
 import { vitePluginUserConfig } from './plugins/virtual-user-config'
 import { UserConfigSchema, type UserInputConfig } from './types/user-config'
@@ -63,15 +63,17 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
             contentProperties: userConfig.content.externalLinks.properties
           }
         ])
-        // Make table scrollable on overflow
-        rehypePlugins.push(rehypeTable)
+        if (userConfig.content.imageCaption) rehypePlugins.push(rehypeImageCaption)
 
         const currentMarkdownProcessor = config.markdown.processor
         const markdownProcessor =
           currentMarkdownProcessor && isUnifiedProcessor(currentMarkdownProcessor)
             ? unified({
                 ...currentMarkdownProcessor.options,
-                remarkPlugins: [...currentMarkdownProcessor.options.remarkPlugins, ...remarkPlugins],
+                remarkPlugins: [
+                  ...currentMarkdownProcessor.options.remarkPlugins,
+                  ...remarkPlugins
+                ],
                 rehypePlugins: [...currentMarkdownProcessor.options.rehypePlugins, ...rehypePlugins]
               })
             : unified({ remarkPlugins, rehypePlugins })

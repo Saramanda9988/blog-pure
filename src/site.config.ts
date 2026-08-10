@@ -3,7 +3,7 @@ import type { CardListData, Config, IntegrationUserConfig, ThemeUserConfig } fro
 export const theme: ThemeUserConfig = {
   // [Basic]
   /** Title for your website. Will be used in metadata and as browser tab title. */
-  title: 'LunaRain_079\'s Inn',
+  title: "LunaRain_079's Inn",
   /** Will be used in index page & copyright declaration */
   author: 'LunaRain_079',
   /** Description metadata for your website. Can be used in page metadata. */
@@ -80,7 +80,10 @@ export const theme: ThemeUserConfig = {
     /** Enable displaying a “Astro & Pure theme powered” link in your site’s footer. */
     credits: true,
     /** Optional details about the social media accounts for this site. */
-    social: { github: 'https://github.com/Saramanda9988' }
+    social: [
+      { icon: 'github', label: 'GitHub', href: 'https://github.com/Saramanda9988' },
+      { icon: 'rss', label: 'RSS', href: '/rss.xml' }
+    ]
   },
 
   // [Content]
@@ -96,7 +99,8 @@ export const theme: ThemeUserConfig = {
     /** Blog page size for pagination (optional) */
     blogPageSize: 8,
     // Currently support weibo, x, bluesky
-    share: ['weibo', 'x', 'bluesky']
+    share: ['weibo', 'x', 'bluesky'],
+    imageCaption: true
   }
 }
 
@@ -107,7 +111,7 @@ export const integ: IntegrationUserConfig = {
     // Friend logbook
     logbook: [
       { date: '2025-03-16', content: 'I have a full seat of water, like, full of water!' },
-      { date: '2025-03-16', content: 'Must be the water.' },
+      { date: '2025-03-16', content: 'Must be the water.' }
     ],
     // Yourself link info
     applyTip: [

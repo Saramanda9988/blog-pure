@@ -110,7 +110,7 @@ twitter大量使用redis进行缓存，在redis中维护用户的timeline，但�
 
 使用普通的关系数据库也可以满足feed消息分发时的关系链查询，但当需要构建社交网络，如获取获取可能感兴趣的人构建feed的时候，系统常需多跳查询
 
-```SQL
+```sql
 SELECT f2.followee_id FROM follows f1 JOIN follows f2 ON f1.followee_id = f2.follower_id WHERE f1.follower_id = A
 ```
 

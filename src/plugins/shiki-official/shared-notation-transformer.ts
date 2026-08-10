@@ -1,4 +1,3 @@
-// https://github.com/shikijs/shiki/blob/main/packages/transformers/src/shared/notation-transformer.ts
 import type { ShikiTransformer, ShikiTransformerContext } from '@shikijs/core'
 import type { Element, Text } from 'hast'
 
@@ -30,9 +29,7 @@ export function createCommentNotationTransformer(
   ) => boolean,
   matchAlgorithm: MatchAlgorithm | undefined
 ): ShikiTransformer {
-  if (matchAlgorithm == null) {
-    matchAlgorithm = 'v3'
-  }
+  matchAlgorithm ??= 'v3'
 
   return {
     name,
@@ -40,7 +37,6 @@ export function createCommentNotationTransformer(
       const lines = code.children.filter((i) => i.type === 'element')
       const linesToRemove: (Element | Text)[] = []
 
-      // biome-ignore lint: the original file used any
       code.data ??= {} as any
       const data = code.data as {
         _shiki_notation?: ParsedComments

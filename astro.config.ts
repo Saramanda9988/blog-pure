@@ -1,13 +1,11 @@
-import { defineConfig, fontProviders, svgoOptimizer } from 'astro/config'
 import { rehypeHeadingIds, unified } from '@astrojs/markdown-remark'
+import AstroPureIntegration from 'astro-pure'
+import { defineConfig, fontProviders, svgoOptimizer } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 
-import AstroPureIntegration from 'astro-pure'
-
 // Local integrations
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts'
-import { rehypeImageCaption } from './packages/pure/plugins/rehype-image-caption.ts'
 // Shiki
 import {
   addCollapse,
@@ -64,8 +62,7 @@ export default defineConfig({
             properties: { className: ['anchor'] },
             content: { type: 'text', value: '#' }
           }
-        ],
-        rehypeImageCaption
+        ]
       ]
     }),
     // https://docs.astro.build/en/guides/syntax-highlighting/

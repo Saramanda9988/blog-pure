@@ -1,5 +1,5 @@
 ---
-import { Button, Collapse, Spoiler, Timeline } from 'astro-pure/user'
+import { Button, Spoiler } from 'astro-pure/user'
 import PageLayout from '@/layouts/CommonPage.astro'
 import Substats from '@/components/about/Substats.astro'
 import ToolSection from '@/components/about/ToolSection.astro'
@@ -23,17 +23,14 @@ const headings = [
   {/* about-me */}
   <p class='text-muted-foreground'>Button Painter / JSON Worker / Bug Maker</p>
   <p class='text-muted-foreground'>
-    你好，我叫 LunaRain_079，还可以叫我 独酌清月/寒蝉 <Spoiler>网名太多了啊嗯🙀</Spoiler>，请随意称呼我
+    你好，我叫 LunaRain_079，还可以叫我 独酌清月/寒蝉 <Spoiler>网名太多了啊嗯🙀</Spoiler
+    >，请随意称呼我
   </p>
   <p class='text-muted-foreground'>
     热爱计算机技术，刷过几门公开课，还喜欢瞎折腾，渴望学习更多有趣的知识
   </p>
-  <p class='text-muted-foreground'>
-    Galgame & Rhythm game enjoyer, Rock & Vocaloid listener
-  </p>
-  <p class='text-muted-foreground'>
-    ロックな心で生きようか？！
-  </p>
+  <p class='text-muted-foreground'>Galgame & Rhythm game enjoyer, Rock & Vocaloid listener</p>
+  <p class='text-muted-foreground'>ロックな心で生きようか？！</p>
   <Button title='Sponsor Me' class='w-fit' href='/projects#sponsorship' variant='ahead' />
 
   {/* tools */}
@@ -71,7 +68,7 @@ const headings = [
         description: 'Galgame manager',
         href: 'https://box.lunarain.site/',
         icon: import('@/assets/tools/lunabox.svg?raw')
-      },
+      }
     ]}
   />
   <ToolSection
@@ -101,7 +98,7 @@ const headings = [
         description: 'IDE',
         href: 'https://www.jetbrains.com/go/',
         icon: import('@/assets/tools/goland.svg?raw')
-      },
+      }
     ]}
   />
   <ToolSection
@@ -137,9 +134,7 @@ const headings = [
 
   {/* social-networks */}
   <h2 id='social-networks'>Social Networks</h2>
-  <p>
-    你可以在这些地方找到我:
-  </p>
+  <p>你可以在这些地方找到我:</p>
   <Substats
     stats={[
       {
@@ -182,9 +177,7 @@ const headings = [
 
   {/* about-blog */}
   <h2 id='about-blog'>About Blog</h2>
-  <p>
-    此网站基于以下项目构建
-  </p>
+  <p>此网站基于以下项目构建</p>
   <ul>
     <li>
       博客框架 & 主题: <a href='https://astro.build/' target='_blank'>Astro</a> + <a
@@ -204,9 +197,7 @@ const headings = [
       <a href='https://waline.js.org/' target='_blank'>Waline</a>
     </li>
     <li>
-      其他统计: <a href='https://github.com/spencerwooo/substats' target='_blank'
-        >Substats</a
-      >
+      其他统计: <a href='https://github.com/spencerwooo/substats' target='_blank'>Substats</a>
     </li>
   </ul>
 </PageLayout>

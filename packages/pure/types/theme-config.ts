@@ -156,15 +156,10 @@ export const ThemeConfigSchema = () =>
        * Optional details about the social media accounts for this site.
        *
        * @example
-       * social: {
-       *   discord: 'https://astro.build/chat',
-       *   github: 'https://github.com/withastro/starlight',
-       *   gitlab: 'https://gitlab.com/delucis',
-       *   threads: 'https://www.threads.net/@nmoodev',
-       *   twitch: 'https://www.twitch.tv/bholmesdev',
-       *   twitter: 'https://twitter.com/astrodotbuild',
-       *   youtube: 'https://youtube.com/@astrodotbuild',
-       * }
+       * social: [
+       *   { icon: 'github', label: 'GitHub', href: 'https://github.com/example' },
+       *   { icon: 'rss', label: 'RSS', href: '/rss.xml' }
+       * ]
        */
       social: SocialLinksSchema()
     }),
@@ -184,7 +179,10 @@ export const ThemeConfigSchema = () =>
       blogPageSize: z.number().optional().default(8),
 
       /** Share buttons to show */
-      share: ShareSchema()
+      share: ShareSchema(),
+
+      /** Enable image captions */
+      imageCaption: z.boolean().default(false).describe('Enable image captions')
     })
   })
 

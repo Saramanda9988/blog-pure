@@ -1,26 +1,21 @@
 /**
+ * https://github.com/withastro/starlight/blob/main/packages/starlight/utils/error-map.ts
  * This is a modified version of Astro's error map.
  * source: https://github.com/withastro/astro/blob/main/packages/astro/src/content/error-map.ts
  */
 
 import { AstroError } from 'astro/errors'
-import { z } from 'astro/zod'
+import { locales, z } from 'astro/zod'
 
-type TypeOrLiteralErrByPathEntry = {
-  code: 'invalid_type' | 'invalid_value'
+// The default Zod error map that we use to retrieve default error messages.
+const zodErrorMap = locales.en().localeError
+
+type TypeErrByPathEntry = {
+  code: 'invalid_type'
   received: unknown
   expected: unknown[]
+  message: string | undefined
 }
-
-type ZodIssueLike = z.core.$ZodIssue & {
-  input?: unknown
-  message?: string
-  path?: PropertyKey[]
-}
-
-type ExpectedIssue =
-  | { code: 'invalid_type'; expected: unknown }
-  | { code: 'invalid_value'; values: readonly unknown[] }
 
 /**
  * Parse data with a Zod schema and throw a nicely formatted error if it is invalid.
@@ -30,12 +25,15 @@ type ExpectedIssue =
  * @param message Error message preamble to use if the input fails to parse.
  * @returns Validated data parsed by Zod.
  */
-export function parseWithFriendlyErrors<T extends z.Schema>(
+export function parseWithFriendlyErrors<T extends z.ZodType>(
   schema: T,
   input: z.input<T>,
   message: string
 ): z.output<T> {
-  return processParsedData(schema.safeParse(input, { error: errorMap }), message)
+  return processParsedData<T>(
+    schema.safeParse(input, { error: errorMap, reportInput: true }),
+    message
+  )
 }
 
 /**
@@ -47,47 +45,48 @@ export function parseWithFriendlyErrors<T extends z.Schema>(
  * @param message Error message preamble to use if the input fails to parse.
  * @returns Validated data parsed by Zod.
  */
-export async function parseAsyncWithFriendlyErrors<T extends z.Schema>(
+export async function parseAsyncWithFriendlyErrors<T extends z.ZodType>(
   schema: T,
   input: z.input<T>,
   message: string
 ): Promise<z.output<T>> {
-  return processParsedData(await schema.safeParseAsync(input, { error: errorMap }), message)
+  return processParsedData<T>(
+    await schema.safeParseAsync(input, { error: errorMap, reportInput: true }),
+    message
+  )
 }
 
-function processParsedData<TSchema extends z.Schema>(
-  parsedData: z.ZodSafeParseResult<z.output<TSchema>>,
+function processParsedData<T extends z.ZodType>(
+  parsedData: z.ZodSafeParseResult<z.output<T>>,
   message: string
-): z.output<TSchema> {
+) {
   if (!parsedData.success) {
     throw new AstroError(message, parsedData.error.issues.map((i) => i.message).join('\n'))
   }
   return parsedData.data
 }
 
-const errorMap: z.core.$ZodErrorMap = (baseError) => formatIssue(baseError as ZodIssueLike)
-
-const formatIssue = (baseError: ZodIssueLike): { message: string } => {
-  const baseErrorPath = flattenErrorPath(baseError.path)
-  if (baseError.code === 'invalid_union') {
+const errorMap: z.core.$ZodErrorMap = (issue) => {
+  const baseErrorPath = flattenErrorPath(issue.path ?? [])
+  if (issue.code === 'invalid_union') {
     // Optimization: Combine type and literal errors for keys that are common across ALL union types
     // Ex. a union between `{ key: z.literal('tutorial') }` and `{ key: z.literal('blog') }` will
     // raise a single error when `key` does not match:
     // > Did not match union.
     // > key: Expected `'tutorial' | 'blog'`, received 'foo'
-    const typeOrLiteralErrByPath: Map<string, TypeOrLiteralErrByPathEntry> = new Map()
-    for (const unionError of baseError.errors.flat()) {
-      if (unionError.code === 'invalid_type' || unionError.code === 'invalid_value') {
-        const flattenedErrorPath = flattenErrorPath(unionError.path)
+    const unionErrors = issue.errors.flat()
+    const typeOrLiteralErrByPath: Map<string, TypeErrByPathEntry> = new Map()
+    for (const unionError of unionErrors) {
+      if (unionError.code === 'invalid_type') {
+        const flattenedErrorPath = flattenErrorPath([baseErrorPath, ...unionError.path])
         if (typeOrLiteralErrByPath.has(flattenedErrorPath)) {
-          typeOrLiteralErrByPath
-            .get(flattenedErrorPath)
-            ?.expected.push(...getExpectedValues(unionError))
+          typeOrLiteralErrByPath.get(flattenedErrorPath)!.expected.push(unionError.expected)
         } else {
           typeOrLiteralErrByPath.set(flattenedErrorPath, {
             code: unionError.code,
-            received: unionError.input,
-            expected: getExpectedValues(unionError)
+            received: parsedType(issue.input),
+            expected: [unionError.expected],
+            message: unionError.message
           })
         }
       }
@@ -96,95 +95,121 @@ const formatIssue = (baseError: ZodIssueLike): { message: string } => {
     const details: string[] = [...typeOrLiteralErrByPath.entries()]
       // If type or literal error isn't common to ALL union types,
       // filter it out. Can lead to confusing noise.
-      .filter(([, error]) => error.expected.length === baseError.errors.length)
+      .filter(([, error]) => error.expected.length === unionErrors.length)
       .map(([key, error]) =>
         key === baseErrorPath
           ? // Avoid printing the key again if it's a base error
-            `> ${getTypeOrLiteralMsg(error)}`
-          : `> ${prefix(key, getTypeOrLiteralMsg(error))}`
+            `> ${getTypeErrMsg(error)}`
+          : `> ${prefix(key, getTypeErrMsg(error))}`
       )
 
     if (details.length === 0) {
       const expectedShapes: string[] = []
-      for (const unionError of baseError.errors) {
+      for (const unionError of issue.errors) {
         const expectedShape: string[] = []
         for (const issue of unionError) {
           // If the issue is a nested union error, show the associated error message instead of the
           // base error message.
           if (issue.code === 'invalid_union') {
-            return formatIssue(issue)
+            return errorMap({ ...issue, input: issue.input, path: [baseErrorPath, ...issue.path] })
           }
           const relativePath = flattenErrorPath(issue.path)
             .replace(baseErrorPath, '')
             .replace(leadingPeriod, '')
-          if ('expected' in issue && typeof issue.expected === 'string') {
+          if (issue.code === 'invalid_type') {
             expectedShape.push(relativePath ? `${relativePath}: ${issue.expected}` : issue.expected)
-          } else {
+          } else if (issue.code === 'custom') {
             expectedShape.push(relativePath)
           }
         }
         if (expectedShape.length === 1 && !expectedShape[0]?.includes(':')) {
           // In this case the expected shape is not an object, but probably a literal type, e.g. `['string']`.
           expectedShapes.push(expectedShape.join(''))
-        } else {
+        } else if (expectedShape.length > 0) {
           expectedShapes.push(`{ ${expectedShape.join('; ')} }`)
         }
       }
       if (expectedShapes.length) {
-        details.push(`> Expected type \`${expectedShapes.join(' | ')}\``)
-        details.push(`> Received \`${stringify(baseError.input)}\``)
+        details.push('> Expected type `' + expectedShapes.join(' | ') + '`')
+        details.push('> Received `' + stringify(issue.input) + '`')
       }
     }
 
-    return {
-      message: messages.concat(details).join('\n')
-    }
-  } else if (baseError.code === 'invalid_value' || baseError.code === 'invalid_type') {
-    return {
-      message: prefix(
-        baseErrorPath,
-        getTypeOrLiteralMsg({
-          code: baseError.code,
-          received: baseError.input,
-          expected: getExpectedValues(baseError)
-        })
-      )
-    }
-  } else if (baseError.message) {
-    return { message: prefix(baseErrorPath, baseError.message) }
+    return messages.concat(details).join('\n')
+  } else if (issue.code === 'invalid_type') {
+    return prefix(
+      baseErrorPath,
+      getTypeErrMsg({
+        code: issue.code,
+        received: parsedType(issue.input),
+        expected: [issue.expected],
+        message: issue.message
+      })
+    )
+  } else if (issue.message) {
+    return prefix(baseErrorPath, issue.message)
   } else {
-    return { message: prefix(baseErrorPath, 'Invalid value') }
+    // By design, the default Zod error may not be provided in Zod 4 error maps. Instead, error
+    // maps are supposed to return `undefined` in order to yield control to the next error map in
+    // the precedence chain. Unfortunately, this prevents us from prefixing all errors with their
+    // paths so we have to manually invoke the default Zod error map here.
+    const defaultError = zodErrorMap(issue)
+    if (!defaultError) return
+
+    return prefix(
+      baseErrorPath,
+      typeof defaultError === 'string' ? defaultError : defaultError.message
+    )
   }
 }
 
-const getTypeOrLiteralMsg = (error: TypeOrLiteralErrByPathEntry): string => {
+const getTypeErrMsg = (error: TypeErrByPathEntry): string => {
   // received could be `undefined` or the string `'undefined'`
-  if (typeof error.received === 'undefined' || error.received === 'undefined') return 'Required'
+  if (typeof error.received === 'undefined' || error.received === 'undefined')
+    return error.message ?? 'Required'
   const expectedDeduped = new Set(error.expected)
-  switch (error.code) {
-    case 'invalid_type':
-      return `Expected type \`${unionExpectedVals(expectedDeduped)}\`, received \`${stringify(
-        error.received
-      )}\``
-    case 'invalid_value':
-      return `Expected \`${unionExpectedVals(expectedDeduped)}\`, received \`${stringify(
-        error.received
-      )}\``
-  }
+  return `Expected type \`${unionExpectedVals(expectedDeduped)}\`, received \`${stringify(
+    error.received
+  )}\``
 }
-
-const getExpectedValues = (issue: ExpectedIssue) =>
-  'expected' in issue ? [issue.expected] : [...issue.values]
 
 const prefix = (key: string, msg: string) => (key.length ? `**${key}**: ${msg}` : msg)
 
 const unionExpectedVals = (expectedVals: Set<unknown>) =>
   [...expectedVals].map((expectedVal) => stringify(expectedVal)).join(' | ')
 
-const flattenErrorPath = (errorPath: PropertyKey[] = []) => errorPath.join('.')
+const flattenErrorPath = (errorPath: PropertyKey[]) => errorPath.join('.')
 
 /** `JSON.stringify()` a value with spaces around object/array entries. */
 const stringify = (val: unknown) =>
   JSON.stringify(val, null, 1).split(newlinePlusWhitespace).join(' ')
 const newlinePlusWhitespace = /\n\s*/
 const leadingPeriod = /^\./
+
+/**
+ * In Zod 4, we don't necessarily get a human-readable representation of input data types. For such
+ * cases, we use the same logic as Zod's own `parsedType()` function.
+ * @see https://github.com/colinhacks/zod/blob/73b071d7d08825dedb6b48b78718739118ee1308/packages/zod/src/v4/locales/en.ts#L5
+ */
+const parsedType = (data: unknown): string => {
+  const t = typeof data
+
+  switch (t) {
+    case 'number': {
+      return Number.isNaN(data) ? 'NaN' : 'number'
+    }
+    case 'object': {
+      if (Array.isArray(data)) {
+        return 'array'
+      }
+      if (data === null) {
+        return 'null'
+      }
+
+      if (data && Object.getPrototypeOf(data) !== Object.prototype && data.constructor) {
+        return data.constructor.name
+      }
+    }
+  }
+  return t
+}

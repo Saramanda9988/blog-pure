@@ -79,7 +79,7 @@ export function vitePluginUserConfig(
     'virtual:user-css': opts.customCss.map((id) => `import ${resolveId(id)};`).join(''),
     'virtual:collection-config': `let userCollections;
 			try {
-				userCollections = (await import(${resolveId('./content/config.ts', srcDir)})).collections;
+				userCollections = (await import(${JSON.stringify(collectionConfigImportPath)})).collections;
 			} catch {}
 			export const collections = userCollections;`
   } satisfies Record<string, string>

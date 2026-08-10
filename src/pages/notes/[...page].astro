@@ -1,23 +1,15 @@
 ---
 import type { GetStaticPaths, Page } from 'astro'
 import type { CollectionEntry } from 'astro:content'
+import { getCollection } from 'astro:content'
 
 import { Paginator } from 'astro-pure/components/pages'
 import { sortMDByDate } from 'astro-pure/server'
-import { getCollection } from 'astro:content'
 import { Button } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import NoteCard from '@/components/notes/NoteCard.astro'
 
 export const prerender = true
-
-// Get notes collection helper
-const prod = import.meta.env.PROD
-const getNotesCollection = async () => {
-  return await getCollection('notes', ({ data }) => {
-    return prod ? !data.draft : true
-  })
-}
 
 export const getStaticPaths = (async ({ paginate }) => {
   const allNotes = await getCollection('notes', ({ data }) => {

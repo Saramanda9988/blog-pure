@@ -40,8 +40,5 @@ bunfig.toml
 /src/content/blog/test.*
 /test/
 
-### NPM ###
-package-lock.json
-
 ### IDEA ###
 .idea/

@@ -1,10 +1,7 @@
 ---
-import { Image } from 'astro:assets'
-
 import { Button, Collapse, Icon } from 'astro-pure/user'
 import PageLayout from '@/layouts/CommonPage.astro'
 import ProjectSection from '@/components/projects/ProjectSection.astro'
-import Sponsors from '@/components/projects/Sponsors.astro'
 import Sponsorship from '@/components/projects/Sponsorship.astro'
 import alipay from '@/assets/alipay-qrcode.jpg'
 import KeyIcon from '@/assets/icons/key.svg'
@@ -29,9 +26,7 @@ const headings = [
       loading='lazy'
     />
   </p> -->
-  <p>
-    如果你认为我的工作很有用或有趣，您可以捐赠以支持我的工作，或联系我讨论项目。
-  </p>
+  <p>如果你认为我的工作很有用或有趣，您可以捐赠以支持我的工作，或联系我讨论项目。</p>
   <Button title='Checkout sponsorship' class='w-fit' href='#sponsorship'>
     <Icon class='size-5' name='receive-money' slot='before' />
   </Button>
@@ -41,14 +36,15 @@ const headings = [
     projects={[
       {
         name: 'LunaBox',
-        description: 'Lightweight, fast, and feature-rich visual novel management and game statistics tool',
+        description:
+          'Lightweight, fast, and feature-rich visual novel management and game statistics tool',
         links: [
           { type: 'github', href: 'https://github.com/Saramanda9988/LunaBox' },
           { type: 'site', href: 'https://box.lunarain.site/' },
           { type: 'doc', href: 'https://box.lunarain.site/guide/introduction.html' },
           { type: 'release', href: 'https://github.com/Saramanda9988/LunaBox/releases' }
         ]
-      },
+      }
     ]}
   />
   <Collapse title='Some old projects'>
@@ -57,14 +53,11 @@ const headings = [
         {
           name: 'TogetherChat',
           description: '支持在线聊天，直播，协作的轻量级IM平台',
-          links: [
-            { type: 'github', href: 'https://github.com/Saramanda9988/TogetherChat' },
-          ]
+          links: [{ type: 'github', href: 'https://github.com/Saramanda9988/TogetherChat' }]
         },
         {
           name: 'DeepLuna',
-          description:
-            '简易的基于 Spring Boot 和 Spring AI 的多 agent 研究与检索系统',
+          description: '简易的基于 Spring Boot 和 Spring AI 的多 agent 研究与检索系统',
           links: [{ type: 'github', href: 'https://github.com/Saramanda9988/DeepLuna' }]
         }
       ]}
@@ -93,12 +86,13 @@ const headings = [
     projects={[
       {
         name: 'hertzbeat',
-        description: "An AI-powered next-generation open source real-time observability system.",
+        description: 'An AI-powered next-generation open source real-time observability system.',
         links: [{ type: 'github', href: 'https://github.com/apache/hertzbeat' }]
       },
       {
         name: 'TranslateProject',
-        description: '参考 Linux 中国翻译项目，设计我们开源俱乐部的翻译项目 HCTT(HUST openatom Club Translation Team)',
+        description:
+          '参考 Linux 中国翻译项目，设计我们开源俱乐部的翻译项目 HCTT(HUST openatom Club Translation Team)',
         links: [
           { type: 'github', href: 'https://github.com/hust-open-atom-club/TranslateProject' },
           { type: 'site', href: 'https://hctt.openatom.club/' }
@@ -106,19 +100,26 @@ const headings = [
       },
       {
         name: 'astrbot-qq-group-daily-analysis',
-        description: 'QQ群日常分析插件 - 生成精美的群聊分析报告，支持话题分析、用户称号、群聊金句等功能',
+        description:
+          'QQ群日常分析插件 - 生成精美的群聊分析报告，支持话题分析、用户称号、群聊金句等功能',
         links: [
-          { type: 'github', href: 'https://github.com/SXP-Simon/astrbot-qq-group-daily-analysis' },
+          { type: 'github', href: 'https://github.com/SXP-Simon/astrbot-qq-group-daily-analysis' }
         ]
-      },
+      }
     ]}
   />
 
   <h2 id='gpg-signature'>GPG Signature</h2>
   <p>
-    你可以通过检查 GPG 签名来验证我签名的文件的真实性。我的 GPG 密钥是 <code>7A964BD6F54E60BB5462F89CDB96B7344CD56E63</code>, 你可以在 openpgp 密钥服务器上找到它或从那里下载
+    你可以通过检查 GPG 签名来验证我签名的文件的真实性。我的 GPG 密钥是 <code
+      >7A964BD6F54E60BB5462F89CDB96B7344CD56E63</code
+    >, 你可以在 openpgp 密钥服务器上找到它或从那里下载
   </p>
-  <Button href='https://keys.openpgp.org/search?q=7A964BD6F54E60BB5462F89CDB96B7344CD56E63' title='Checkout my key' target='_blank'>
+  <Button
+    href='https://keys.openpgp.org/search?q=7A964BD6F54E60BB5462F89CDB96B7344CD56E63'
+    title='Checkout my key'
+    target='_blank'
+  >
     <KeyIcon class='size-5' slot='before' />
   </Button>
 
