@@ -35,12 +35,6 @@
           "link": "http://elysia.wiki:222/"
         },
         {
-          "avatar": "/photos/91131723.png",
-          "name": "rand777",
-          "intro": "摇摇晃晃，也能到达目的地。",
-          "link": "https://blog.rand777.space/"
-        },
-        {
           "name": "SOV710",
           "link": "https://blog.sov710.org",
           "avatar": "https://assets.sov710.org/images/meta/avatar.png",
@@ -111,6 +105,12 @@
           "link": "https://www.kun.moe/",
           "avatar": "https://www.kun.moe/avatar.webp",
           "intro": "莲的老公"
+        },
+                {
+          "name": "xm486",
+          "link": "https://xm486.zh.kg/",
+          "avatar": "https://xm486.zh.kg/image/favicon-128.png",
+          "intro": "xm486の小窝"
         }
       ]
     },
