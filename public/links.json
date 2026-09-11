@@ -29,12 +29,6 @@
           "intro": "小海的角落"
         },
         {
-          "avatar": "/photos/Rlogo.png",
-          "name": "RobinElysia",
-          "intro": "We are always devout scholars",
-          "link": "http://elysia.wiki:222/"
-        },
-        {
           "name": "SOV710",
           "link": "https://blog.sov710.org",
           "avatar": "https://assets.sov710.org/images/meta/avatar.png",
@@ -111,6 +105,12 @@
           "link": "https://xm486.zh.kg/",
           "avatar": "https://xm486.zh.kg/image/favicon-128.png",
           "intro": "xm486の小窝"
+        },
+        {
+          "name": "non_hana",
+          "link": "https://caelum.moe",
+          "avatar": "https://static-r2.caelum.moe/avatar.webp",
+          "intro": "『灰色的花，终有一天会盛开吧。』"
         }
       ]
     },
