@@ -1,0 +1,41 @@
+---
+import Arrow from './Arrow.astro'
+import Figure from './Figure.astro'
+import Node from './Node.astro'
+
+const steps = [
+  { q: '领先者分数 ≥ 0.4 且不并列？', a: '监控领先者', kind: 'game' as const },
+  { q: 'launcher 仍然存活？', a: '监控 launcher', kind: 'plain' as const },
+  { q: '只剩唯一一个稳定进程？', a: '监控该进程', kind: 'game' as const }
+]
+const QX = 20
+const QW = 250
+const AX = 340
+const AW = 150
+const H = 34
+const y = (i: number) => 56 + i * 64
+---
+
+<Figure caption='超时兜底：从上到下依次尝试，越往下越保守' maxWidth={540}>
+  <svg viewBox='0 0 510 300' role='img' aria-label='超时兜底流程'>
+    <Node x={QX} y={4} w={QW} h={H} label='到达超时 T，仍未确认' kind='us' />
+    <Arrow points={[[QX + QW / 2, 4 + H], [QX + QW / 2, y(0)]]} />
+    {
+      steps.map((s, i) => (
+        <>
+          <Node x={QX} y={y(i)} w={QW} h={H} label={s.q} />
+          <Arrow points={[[QX + QW, y(i) + H / 2], [AX, y(i) + H / 2]]} />
+          <text x={(QX + QW + AX) / 2} y={y(i) + H / 2 - 6} font-size='10' text-anchor='middle' class='t-muted'>
+            是
+          </text>
+          <Node x={AX} y={y(i)} w={AW} h={H} label={s.a} kind={s.kind} />
+          <Arrow points={[[QX + QW / 2, y(i) + H], [QX + QW / 2, y(i + 1)]]} />
+          <text x={QX + QW / 2 + 8} y={y(i) + H + 18} font-size='10' class='t-muted'>
+            否
+          </text>
+        </>
+      ))
+    }
+    <Node x={QX} y={y(3)} w={QW} h={H} label='请用户手动选择进程' kind='warn' />
+  </svg>
+</Figure>

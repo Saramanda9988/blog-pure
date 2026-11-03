@@ -1,0 +1,86 @@
+---
+import Figure from './Figure.astro'
+
+const TAU = 2
+const THETA = 0.85
+const L = 44
+const R = 412
+const T = 14
+const B = 250
+const X_MAX = 10
+const sx = (t: number) => L + (t / X_MAX) * (R - L)
+const sy = (v: number) => B - v * (B - T)
+
+const rise = (t: number) => 1 - Math.exp(-t / TAU)
+const SPLASH_END = 2.5
+const series = {
+  game: (t: number) => rise(t),
+  splash: (t: number) =>
+    t < SPLASH_END ? rise(t) : rise(SPLASH_END) * Math.exp(-(t - SPLASH_END) / TAU),
+  launcher: (t: number) => 0.25 * rise(t)
+}
+const path = (f: (t: number) => number) => {
+  const pts: string[] = []
+  for (let t = 0; t <= X_MAX + 1e-9; t += 0.05) pts.push(`${sx(t).toFixed(1)},${sy(f(t)).toFixed(1)}`)
+  return 'M' + pts.join('L')
+}
+const tCross = -TAU * Math.log(1 - THETA)
+---
+
+<Figure
+  caption='τ = 2 s 时三类候选的分数曲线：只有持续呈现「像游戏」的进程能越过 0.85'
+  maxWidth={600}
+>
+  <svg viewBox='0 0 560 284' role='img' aria-label='EMA 分数随时间变化曲线'>
+    {
+      [0, 0.25, 0.5, 0.75, 1].map((v) => (
+        <>
+          <line x1={L} x2={R} y1={sy(v)} y2={sy(v)} class='ln-faint'></line>
+          <text x={L - 8} y={sy(v)} font-size='10' text-anchor='end' dominant-baseline='central' class='t-muted'>
+            {v}
+          </text>
+        </>
+      ))
+    }
+    {
+      [0, 2, 4, 6, 8, 10].map((t) => (
+        <text x={sx(t)} y={B + 16} font-size='10' text-anchor='middle' class='t-muted'>
+          {t} s
+        </text>
+      ))
+    }
+    <line x1={L} x2={R} y1={B} y2={B} class='ln'></line>
+    <text x={L + 6} y={T + 12} font-size='10' class='t-muted'>分数 s</text>
+
+    <line x1={L} x2={R} y1={sy(THETA)} y2={sy(THETA)} class='ln ln-dash'></line>
+    <text x={R - 4} y={sy(THETA) - 6} font-size='11' text-anchor='end' class='t-muted'>θ = 0.85</text>
+
+    <path d={path(series.launcher)} fill='none' style='stroke:var(--gd-muted);stroke-width:2;stroke-dasharray:6 4'
+    ></path>
+    <path d={path(series.splash)} fill='none' style='stroke:var(--gd-warn);stroke-width:2.2'></path>
+    <path d={path(series.game)} fill='none' style='stroke:var(--gd-primary);stroke-width:2.4'></path>
+
+    <line x1={sx(tCross)} x2={sx(tCross)} y1={sy(THETA)} y2={B} class='ln-faint ln-dash'></line>
+    <circle cx={sx(tCross)} cy={sy(THETA)} r='4' style='fill:var(--gd-primary)'></circle>
+    <text x={sx(tCross) + 8} y={sy(THETA) + 18} font-size='11' class='t-primary'>≈ 3.8 s 越过阈值</text>
+
+    <text x={R + 10} y={sy(series.game(X_MAX))} font-size='11' dominant-baseline='central' class='t-primary'>
+      前台游戏窗口
+    </text>
+    <text x={R + 10} y={sy(series.game(X_MAX)) + 15} font-size='10' dominant-baseline='central' class='t-muted'>
+      x = 1
+    </text>
+    <text x={R + 10} y={sy(series.launcher(X_MAX)) - 6} font-size='11' dominant-baseline='central'>
+      无窗口的启动器
+    </text>
+    <text x={R + 10} y={sy(series.launcher(X_MAX)) + 9} font-size='10' dominant-baseline='central' class='t-muted'>
+      x = 0.25，上限 0.25
+    </text>
+    <text x={R + 10} y={sy(series.splash(X_MAX)) - 12} font-size='11' dominant-baseline='central' class='t-warn'>
+      2.5 秒启动屏
+    </text>
+    <text x={R + 10} y={sy(series.splash(X_MAX)) + 3} font-size='10' dominant-baseline='central' class='t-muted'>
+      峰值 0.71，随后衰减
+    </text>
+  </svg>
+</Figure>

@@ -1,0 +1,45 @@
+---
+interface Props {
+  x: number
+  y: number
+  w: number
+  h?: number
+  label: string
+  sub?: string
+  kind?: 'plain' | 'game' | 'warn' | 'ghost' | 'us'
+  fs?: number
+}
+
+const { x, y, w, h = 28, label, sub, kind = 'plain', fs = 12 } = Astro.props
+const cx = x + w / 2
+const cy = y + h / 2
+const boxClass = { plain: 'box', game: 'box-game', warn: 'box-warn', ghost: 'box-ghost', us: 'box-us' }[kind]
+const textClass = kind === 'us' ? 'on-us' : kind === 'ghost' ? 't-muted' : undefined
+---
+
+<g>
+  <rect x={x} y={y} width={w} height={h} rx='6' class={boxClass}></rect>
+  {
+    sub ? (
+      <>
+        <text x={cx} y={cy - 2} font-size={fs} text-anchor='middle' class={textClass}>
+          {label}
+        </text>
+        <text x={cx} y={cy + fs - 1} font-size={fs - 2} text-anchor='middle' class='t-muted'>
+          {sub}
+        </text>
+      </>
+    ) : (
+      <text
+        x={cx}
+        y={cy}
+        font-size={fs}
+        text-anchor='middle'
+        dominant-baseline='central'
+        class={textClass}
+      >
+        {label}
+      </text>
+    )
+  }
+</g>

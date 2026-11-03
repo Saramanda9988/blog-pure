@@ -1,0 +1,31 @@
+---
+interface Props {
+  /** 折线经过的点，箭头画在最后一个点上 */
+  points: [number, number][]
+  dashed?: boolean
+  /** 不画箭头，只画连线 */
+  plain?: boolean
+}
+
+const { points, dashed = false, plain = false } = Astro.props
+const [x1, y1] = points[points.length - 2]
+const [x2, y2] = points[points.length - 1]
+const ang = Math.atan2(y2 - y1, x2 - x1)
+const L = 7
+const W = 3.5
+const head = [
+  [x2, y2],
+  [x2 - L * Math.cos(ang) + W * Math.sin(ang), y2 - L * Math.sin(ang) - W * Math.cos(ang)],
+  [x2 - L * Math.cos(ang) - W * Math.sin(ang), y2 - L * Math.sin(ang) + W * Math.cos(ang)]
+]
+// 线条终点缩回到箭头底部，避免线头从箭尖露出来
+const line = plain
+  ? points
+  : [...points.slice(0, -1), [x2 - (L - 1) * Math.cos(ang), y2 - (L - 1) * Math.sin(ang)]]
+const fmt = (ps: number[][]) => ps.map((p) => p.map((v) => v.toFixed(1)).join(',')).join(' ')
+---
+
+<g>
+  <polyline points={fmt(line)} class:list={['ln', { 'ln-dash': dashed }]}></polyline>
+  {!plain && <polygon points={fmt(head)} class='ah'></polygon>}
+</g>

@@ -1,0 +1,111 @@
+---
+interface Props {
+  caption?: string
+  /** SVG 的最大显示宽度（px），避免在宽屏上把文字放得过大 */
+  maxWidth?: number
+}
+
+const { caption, maxWidth } = Astro.props
+---
+
+<figure class='gd-figure' style={maxWidth ? `--gd-max:${maxWidth}px` : undefined}>
+  <slot />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style is:global>
+  .gd-figure {
+    --gd-fg: hsl(var(--foreground));
+    --gd-muted: hsl(var(--muted-foreground));
+    --gd-line: hsl(var(--muted-foreground) / 0.55);
+    --gd-faint: hsl(var(--muted-foreground) / 0.25);
+    --gd-box: hsl(var(--muted));
+    --gd-primary: hsl(var(--primary));
+    --gd-warn: hsl(28 85% 48%);
+    margin: 1.75rem 0;
+    text-align: center;
+  }
+  .dark .gd-figure {
+    --gd-warn: hsl(36 90% 64%);
+  }
+  .gd-figure > svg {
+    display: block;
+    width: 100%;
+    max-width: var(--gd-max, 100%);
+    height: auto;
+    margin: 0 auto;
+    overflow: visible;
+  }
+  .gd-figure figcaption {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground) / 0.8);
+    font-weight: 300;
+  }
+
+  /* SVG 内部通用样式 */
+  .gd-figure text {
+    fill: var(--gd-fg);
+    font-family: inherit;
+  }
+  .gd-figure .t-muted {
+    fill: var(--gd-muted);
+  }
+  .gd-figure .t-primary {
+    fill: var(--gd-primary);
+  }
+  .gd-figure .t-warn {
+    fill: var(--gd-warn);
+  }
+  .gd-figure .ln {
+    stroke: var(--gd-line);
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .gd-figure .ln-faint {
+    stroke: var(--gd-faint);
+    stroke-width: 1;
+    fill: none;
+  }
+  .gd-figure .ln-dash {
+    stroke-dasharray: 4 3;
+  }
+  .gd-figure .ah {
+    fill: var(--gd-line);
+  }
+  .gd-figure .box {
+    fill: var(--gd-box);
+    stroke: var(--gd-line);
+    stroke-width: 1.2;
+  }
+  .gd-figure .box-game {
+    fill: color-mix(in srgb, var(--gd-primary) 16%, transparent);
+    stroke: var(--gd-primary);
+    stroke-width: 1.5;
+  }
+  .gd-figure .box-warn {
+    fill: color-mix(in srgb, var(--gd-warn) 14%, transparent);
+    stroke: var(--gd-warn);
+    stroke-width: 1.5;
+  }
+  .gd-figure .box-ghost {
+    fill: none;
+    stroke: var(--gd-line);
+    stroke-width: 1.2;
+    stroke-dasharray: 4 3;
+  }
+  .gd-figure .box-us {
+    fill: var(--gd-fg);
+    stroke: none;
+  }
+  .gd-figure .box-us + text,
+  .gd-figure text.on-us {
+    fill: hsl(var(--background));
+  }
+  .gd-figure .region {
+    fill: none;
+    stroke: var(--gd-faint);
+    stroke-width: 1.2;
+    stroke-dasharray: 5 4;
+  }
+</style>

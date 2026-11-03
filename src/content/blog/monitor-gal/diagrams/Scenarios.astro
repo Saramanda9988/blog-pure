@@ -1,0 +1,176 @@
+---
+import Arrow from './Arrow.astro'
+import Figure from './Figure.astro'
+import Node from './Node.astro'
+---
+
+<Figure caption='汉化 galgame 启动时常见的几种「不规矩」行为'>
+  <div class='gd-legend'>
+    <span><i class='sw sw-us'></i>LunaBox</span>
+    <span><i class='sw sw-plain'></i>启动 / 中间层进程</span>
+    <span><i class='sw sw-warn'></i>容易被误认的进程</span>
+    <span><i class='sw sw-ghost'></i>已退出</span>
+    <span><i class='sw sw-game'></i>真正的游戏</span>
+  </div>
+  <div class='gd-sc-grid'>
+    <div class='gd-sc'>
+      <div class='gd-sc-head'><span>1</span>游戏实际进程不在启动目录中</div>
+      <svg viewBox='0 0 280 96' role='img' aria-label='启动器从游戏目录把游戏解包到临时目录并拉起'>
+        <rect x='4' y='8' width='124' height='80' rx='8' class='region'></rect>
+        <text x='14' y='26' font-size='10' class='t-muted'>游戏目录/</text>
+        <rect x='152' y='8' width='124' height='80' rx='8' class='region'></rect>
+        <text x='162' y='26' font-size='10' class='t-muted'>%TEMP%/</text>
+        <Node x={18} y={44} w={96} label='launcher.exe' />
+        <Node x={166} y={38} w={96} h={40} label='a8f3.tmp' sub='实际游戏' kind='game' />
+        <text x='140' y='50' font-size='9' text-anchor='middle' class='t-muted'>解包</text>
+        <Arrow points={[[114, 58], [166, 58]]} />
+      </svg>
+      <p>启动器把游戏解包到临时目录，或者从另一个目录拉起</p>
+    </div>
+
+    <div class='gd-sc'>
+      <div class='gd-sc-head'><span>2</span>同名启动窗</div>
+      <svg viewBox='0 0 280 96' role='img' aria-label='同名的启动窗关闭后再次启动真正的游戏'>
+        <Node x={10} y={28} w={96} h={40} label='game.exe' sub='启动窗' kind='warn' />
+        <Node x={174} y={28} w={96} h={40} label='game.exe' sub='真正的游戏' kind='game' />
+        <text x='140' y='40' font-size='9' text-anchor='middle' class='t-muted'>关闭后</text>
+        <Arrow points={[[106, 48], [174, 48]]} />
+        <text x='140' y='64' font-size='9' text-anchor='middle' class='t-muted'>再次启动</text>
+      </svg>
+      <p>先弹一个和主进程同名的启动窗，关掉后再启动一次真正的游戏</p>
+    </div>
+
+    <div class='gd-sc'>
+      <div class='gd-sc-head'><span>3</span>设置窗</div>
+      <svg viewBox='0 0 280 96' role='img' aria-label='确认设置窗后才出现游戏窗口'>
+        <Node x={10} y={28} w={96} h={40} label='设置窗' sub='分辨率 / 画质' kind='warn' />
+        <Node x={174} y={28} w={96} h={40} label='游戏窗口' sub='真正的游戏' kind='game' />
+        <text x='140' y='40' font-size='9' text-anchor='middle' class='t-muted'>点击确认</text>
+        <Arrow points={[[106, 48], [174, 48]]} />
+      </svg>
+      <p>先出现一个分辨率/画质设置窗，确认关闭后才出现真正的游戏窗口</p>
+    </div>
+
+    <div class='gd-sc'>
+      <div class='gd-sc-head'><span>4</span>启动器快速退出</div>
+      <svg viewBox='0 0 280 96' role='img' aria-label='启动器拉起游戏后立即退出，进程树断裂'>
+        <Node x={4} y={34} w={64} label='LunaBox' kind='us' />
+        <Node x={96} y={34} w={86} label='launcher.exe' kind='ghost' />
+        <Node x={210} y={34} w={66} label='game.exe' kind='game' />
+        <Arrow points={[[68, 48], [96, 48]]} />
+        <Arrow points={[[182, 48], [210, 48]]} dashed />
+        <text x='139' y='80' font-size='9' text-anchor='middle' class='t-muted'>已退出 · 进程树断裂</text>
+      </svg>
+      <p>launcher 拉起游戏后立刻退出，容易被误判为「游戏已经退出」</p>
+    </div>
+
+    <div class='gd-sc'>
+      <div class='gd-sc-head'><span>5</span>启动器作为壳进程常驻</div>
+      <svg viewBox='0 0 280 96' role='img' aria-label='启动器常驻，游戏是它另起的子进程'>
+        <Node x={4} y={34} w={64} label='LunaBox' kind='us' />
+        <Node x={96} y={28} w={86} h={40} label='launcher.exe' sub='一直运行' kind='warn' />
+        <Node x={210} y={34} w={66} label='game.exe' kind='game' />
+        <Arrow points={[[68, 48], [96, 48]]} />
+        <Arrow points={[[182, 48], [210, 48]]} />
+      </svg>
+      <p>launcher 会一直运行，游戏是它另起的进程</p>
+    </div>
+
+    <div class='gd-sc'>
+      <div class='gd-sc-head'><span>6</span>转区工具 / Steam 等中间层</div>
+      <svg viewBox='0 0 280 96' role='img' aria-label='经由转区工具或 Steam 启动，游戏与启动进程之间没有父子关系'>
+        <Node x={4} y={34} w={64} label='LunaBox' kind='us' />
+        <Node x={96} y={28} w={86} h={40} label='LEProc.exe' sub='或 steam.exe' />
+        <Node x={210} y={34} w={66} label='game.exe' kind='game' />
+        <Arrow points={[[68, 48], [96, 48]]} />
+        <Arrow points={[[182, 48], [210, 48]]} dashed plain />
+        <text x='196' y='40' font-size='11' text-anchor='middle' class='t-warn'>?</text>
+        <text x='196' y='80' font-size='9' text-anchor='middle' class='t-muted'>没有父子关系</text>
+      </svg>
+      <p>游戏和我们启动的进程之间甚至没有父子关系</p>
+    </div>
+  </div>
+</Figure>
+
+<style is:global>
+  .gd-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--gd-muted);
+  }
+  .gd-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .gd-legend .sw {
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.65rem;
+    border-radius: 3px;
+    border: 1.5px solid var(--gd-line);
+  }
+  .gd-legend .sw-us {
+    background: var(--gd-fg);
+    border-color: var(--gd-fg);
+  }
+  .gd-legend .sw-plain {
+    background: var(--gd-box);
+  }
+  .gd-legend .sw-warn {
+    border-color: var(--gd-warn);
+    background: color-mix(in srgb, var(--gd-warn) 14%, transparent);
+  }
+  .gd-legend .sw-ghost {
+    border-style: dashed;
+  }
+  .gd-legend .sw-game {
+    border-color: var(--gd-primary);
+    background: color-mix(in srgb, var(--gd-primary) 16%, transparent);
+  }
+  .gd-sc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 0.75rem;
+    text-align: left;
+  }
+  .gd-sc {
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.6rem;
+    padding: 0.7rem 0.8rem 0.6rem;
+  }
+  .gd-sc-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--gd-fg);
+  }
+  .gd-sc-head span {
+    display: inline-grid;
+    place-items: center;
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    background: var(--gd-box);
+    color: var(--gd-muted);
+  }
+  .gd-sc svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0.35rem 0;
+  }
+  .gd-figure .gd-sc p {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--gd-muted);
+  }
+</style>
