@@ -42,3 +42,8 @@ bunfig.toml
 
 ### IDEA ###
 .idea/
+
+# Waline / LeanCloud data exports (contain emails, IPs, password hashes)
+backup/
+.neon
+.env.local

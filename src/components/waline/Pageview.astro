@@ -14,12 +14,13 @@ import config from '@/site-config'
       const pageview = await import(`${npmCDN}/@waline/client@v3/dist/pageview.js`)
       const el = document.querySelector('.waline-pageview-count')
       if (el) {
-        // Keep in sync with Comment.astro: strip trailing slash so the key matches data-path
-        const { pathname } = window.location
-        pageview.pageviewCount({
-          serverURL: walineServer,
-          path: pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
-        })
+        // Inline copy of normalizeWalinePath (./path.ts): decoded, no trailing slash
+        let path = window.location.pathname
+        try {
+          path = decodeURI(path)
+        } catch {}
+        if (path.length > 1) path = path.replace(/\/+$/, '') || '/'
+        pageview.pageviewCount({ serverURL: walineServer, path })
       }
     } catch (e) {
       console.error('Failed to load Waline pageview:', e)
