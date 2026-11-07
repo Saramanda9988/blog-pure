@@ -14,9 +14,11 @@ import config from '@/site-config'
       const pageview = await import(`${npmCDN}/@waline/client@v3/dist/pageview.js`)
       const el = document.querySelector('.waline-pageview-count')
       if (el) {
+        // Keep in sync with Comment.astro: strip trailing slash so the key matches data-path
+        const { pathname } = window.location
         pageview.pageviewCount({
           serverURL: walineServer,
-          path: window.location.pathname
+          path: pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
         })
       }
     } catch (e) {

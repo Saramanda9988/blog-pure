@@ -50,9 +50,15 @@ const { class: className } = Astro.props
         (preset) => `${config.npmCDN}/@waline/emojis@1.2.0/${preset}` as WalineEmojiPresets
       )
 
+      // The host 308-redirects `/post` -> `/post/`, while build-time `data-path` has no
+      // trailing slash (trailingSlash: 'never'). Normalize so comments/pageviews use one key.
+      const { pathname } = window.location
+      const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
+
       walineInit({
         el: 'comment-component #waline',
         serverURL: walineConfig.server || '',
+        path,
         emoji,
         reaction: ['/icons/heart-item.svg'],
         ...walineConfig.additionalConfigs,
