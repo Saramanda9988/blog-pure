@@ -13,11 +13,11 @@ language: '中文'
 
 Feed流是一种内容聚合和分发机制。作为一个消息分发系统，它和聊天的架构有异曲同工之妙
 
-![微博的feed](/photos/feed/image(2).png)
+![微博的feed](/photos/feed/image(2).webp)
 
-![github__的feed(本质上更像是动态)](/photos/feed/image(3).png)
+![github__的feed(本质上更像是动态)](/photos/feed/image(3).webp)
 
-![知乎的动态](/photos/feed/image(4).png)
+![知乎的动态](/photos/feed/image(4).webp)
 
 无论是传统的社交平台的关注/好友feed流，视频/文章平台的动态还是im系统中的朋友圈，其技术的核心都包含三个方面：
 
@@ -76,7 +76,7 @@ Feed流是一种内容聚合和分发机制。作为一个消息分发系统，�
 
 twitter大量使用redis进行缓存，在redis中维护用户的timeline，但是在redis维护所有用户的timeline（即时他们并不活跃）过于消耗资源，为此，twitter进行了用户分级
 
-![](/photos/feed/image(6).png)
+![](/photos/feed/image(6).webp)
 
 - 对于活跃/在线用户，他们的timeline会在redis中进行维护，
 
@@ -88,9 +88,9 @@ twitter大量使用redis进行缓存，在redis中维护用户的timeline，但�
 
   - 名人之间如果相互关注了，仍然采用写扩散，写入对方收件箱
 
-    ![twitter的服务关系](/photos/feed/image(5).png)
+    ![twitter的服务关系](/photos/feed/image(5).webp)
 
-    ![硬核课堂的分级策略，twitter的策略他可能认为是对发件箱的依赖，因此采用了收件箱长度的策略](/photos/feed/image(7).png)
+    ![硬核课堂的分级策略，twitter的策略他可能认为是对发件箱的依赖，因此采用了收件箱长度的策略](/photos/feed/image(7).webp)
 
 利用这种读写扩散，推拉结合的架构，twitter的消息的聚合分发实现，对于一些广告，也可以采用类似读扩散的方式，在获取timeline的时候获取广告信息，统一进行展示
 
@@ -98,7 +98,7 @@ twitter大量使用redis进行缓存，在redis中维护用户的timeline，但�
 
 图文流模式是推荐排序， 可能需要推荐服务进行画像，个性化收集，写入收件箱，没有找到相关的资料，对应的架构几乎完全不同，估计是和搜广推的关联更大
 
-![](/photos/feed/image(8).png)
+![](/photos/feed/image(8).webp)
 
 ## 信息的异构
 
@@ -118,13 +118,13 @@ SELECT f2.followee_id FROM follows f1 JOIN follows f2 ON f1.followee_id = f2.fol
 
 使用图数据库，方便向关系中台进行演进
 
-![](/photos/feed/image(9).png)
+![](/photos/feed/image(9).webp)
 
 ## Feed的删除
 
-![](/photos/feed/image(10).png)
+![](/photos/feed/image(10).webp)
 
-![](/photos/feed/image(11).png)
+![](/photos/feed/image(11).webp)
 
 ~~Github~~ ~~feed因为特殊的产品形态（纯用户行为timeline）不保证一致性（取消关注了feed中也有关注记录）~~
 

@@ -11,7 +11,7 @@ description: 奈飞（Netflix）分享了 Pushy 的演进细节，它是一个 W
 
 <iframe src="https://www.youtube.com/embed/6w6E_B55p0E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-![](/photos/20250721161754.png)
+![](/photos/20250721161754.webp)
 
 ## 挑战
 
@@ -68,6 +68,6 @@ HTTP 是无状态的协议，一次请求一次响应，而 **持久连接**（�
 
 ## 长连接的负载均衡
 
-![](/photos/20250722111029.png)
+![](/photos/20250722111029.webp)
 在tcp层运行负载均衡器/使用亚马逊LB负载均衡
-![](/photos/20250722111203.png)
+![](/photos/20250722111203.webp)

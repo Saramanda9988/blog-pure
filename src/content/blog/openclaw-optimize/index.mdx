@@ -22,17 +22,17 @@ import { Aside } from 'astro-pure/user'
 
 首先肯定是让ai写个bench脚本，先打一个.heapsnapshot，看看内存占用的情况：
 
-![](/photos/openclaw1.png)
+![](/photos/openclaw1.webp)
 
 第一眼就能看到最大的global，占据了几乎100%的内存，但是先不急，先看看浅层大小下谁占用最高
 
-![](/photos/openclaw2.png)
+![](/photos/openclaw2.webp)
 
-![](/photos/openclaw3.png)
+![](/photos/openclaw3.webp)
 
 string看起来占用很高，浅层大小就占据了28%的大小，点开看一看
 
-![](/photos/openclaw4.png)
+![](/photos/openclaw4.webp)
 
 好家伙，一眼看过去是各种各样的import和require的字符串，总共有124000+!
 

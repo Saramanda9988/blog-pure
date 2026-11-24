@@ -5,7 +5,7 @@ publishDate: 2026-01-09
 tags:
   - Wails V2
   - 笔记
-heroImage: { src: './thumbnail.png', color: 'rgb(80, 108, 157)' }
+heroImage: { src: './thumbnail.webp', color: 'rgb(80, 108, 157)' }
 ---
 
 ## 背景
@@ -24,7 +24,7 @@ heroImage: { src: './thumbnail.png', color: 'rgb(80, 108, 157)' }
 但是另一方面wails v2也有一些让人心(绞)痛的缺点，虽然说作者说在v3里会解决（事实上也真的解决了），但是作者迟迟不发wails v3，每个月还能有break-change，从2020年到现在已经5年了，哪吒都两岁了吧喂喂(ﾟДﾟ*)ﾉ
 
 当时也算是没做好技术选型就上了，满脑子都是golang，现在吃了苦，想升级v3都不行，这里就写一些缺点，方便有想用wails进行桌面端开发的同学参考，如果你能接受并处理好，就放心大胆的去用吧
-![多西跌，这种事情不要啊](image.png)
+![多西跌，这种事情不要啊](image.webp)
 
 ## 槽点
 
@@ -35,9 +35,9 @@ heroImage: { src: './thumbnail.png', color: 'rgb(80, 108, 157)' }
 
 用是可以用的，但是就是不太好用，你需要处理wails v2提供的窗口生命周期和systray的生命周期之间的关系，还有搞明白几个重要的参数和程序行为。
 
-![钩子函数回调](image-1.png)
+![钩子函数回调](image-1.webp)
 
-![窗口相关参数](image-2.png)
+![窗口相关参数](image-2.webp)
 
 窗口会有3个行为，分别是Quit，Hide和Show
 
